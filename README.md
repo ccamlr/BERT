@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### Overview
 
 The **BERT** R package contains methods for estimating biomass with
@@ -31,3 +32,7 @@ Install via devtools:
 library(devtools)
 install_github("ccamlr/BERT", build_vignettes = FALSE)
 ```
+=======
+# BERT
+Biomass Estimation for Research on Toothfish
+>>>>>>> dfae0d7ba31f0b5d2a5c19cd298c96a2aea5ff3b
