@@ -1,11 +1,14 @@
-CHANGES in BERT DEV VERSION 0.1.0-9999
+## CHANGES 
 
-o New functions 'load_data' and 'load_bathy_data' to streamline the loading of
-data
+documentation of bathy_data has been added but needs to be revised 
 
-o New functions 'sum_area' and 'seabed_area'
 
-BERT VERSION 0.1.0
+## ISSUES
 
-o Package implementing of models for the estimation of biomass in CCAMLR
+load_bathy_data function needs to be updated with the correct url
+
+
+## BERT VERSION 0.1.0
+
+Package implementing models for the estimation of biomass in CCAMLR exploratory
 fisheries
