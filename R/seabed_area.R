@@ -25,16 +25,16 @@ sum_area <- function(bathymetry){
 #' relevant polygon names/labels
 #' @param fishable_area is TRUE if you would like to calculate the planimetric
 #' seabed area in the fishable depth range (i.e. 800-1600m)
-#' @param save_fishable_seabed_plots is TRUE if you woud like to save plots of
-#' the fishable seabed area within the ROI
+#' @param depth_classes is a vector of the text strings that indicate the min and max within each depth class e.g. c("0-600","600-1800","1800-max")
+#' @import raster
 #' @export
-seabed_area <- function(bathymetry, ROI, ROI_name, fishable_area, save_fishable_seabed_plots){
+seabed_area <- function(bathymetry, ROI, ROI_name, fishable_area, depth_classes){
   # check ROI_name is a character vector
   if(length(names(ROI)[names(ROI)%in%ROI_name])>1) stop("ROI names in spatial polygon dataframe are not unique")
   if(is.null(names(ROI)[names(ROI)%in%ROI_name])) stop("ROI name is not included in spatial polygon dataframe ")
   # check that all spatial data are in the same projection
   ##* proj4string is in both raster and sp, use :: to specify which
-  if(raster::proj4string(bathymetry)!=raster::proj4string(ROI)) stop("projection of bathymetry data does not match that of the ROI")
+  if(sp::proj4string(bathymetry)!=sp::proj4string(ROI)) stop("projection of bathymetry data does not match that of the ROI")
 
   area_names <- ROI@data[,names(ROI)%in%ROI_name]
 
@@ -42,37 +42,47 @@ seabed_area <- function(bathymetry, ROI, ROI_name, fishable_area, save_fishable_
     plan_area <- data.frame(matrix(nrow=length(area_names),ncol=3))
     names(plan_area)<-c("Area","Total Seabed area km2","Fishable Seabed area km2")
   }else{
-    plan_area <- data.frame(matrix(nrow=length(area_names),ncol=2))
-    names(plan_area)<-c("Area","Total Seabed area km2")
+    plan_area=data.frame(matrix(nrow=length(area_names),ncol=length(depth_classes)+2))
+    names(plan_area)=c("Region","Total_area",depth_classes)
+    # prepare depth reclass matrix
+    depth_class_mat<-as.matrix(do.call('rbind', strsplit(as.character(depth_classes),'-',fixed=TRUE)))
+    depth_class_mat[dim(depth_class_mat)[1],dim(depth_class_mat)[2]]<- minValue(bathymetry)-1
+    class(depth_class_mat)<- "numeric"
+    # if depth is specified in positive values then change to negative
+    depth_class_mat[depth_class_mat>0]<- depth_class_mat[depth_class_mat>0]*-1
+    # reorder matrix with lower values in first col
+    depth_class_mat[,c(1,2)]<-depth_class_mat[,c(2,1)]
+    depth_class_mat<-cbind(depth_class_mat,seq(from=1,length(depth_classes),by=1))
   }
 
   for (name in area_names) {
   # index Research block
     Poly <- ROI[area_names%in%name,]
-
+    # Poly <- ROI[area_names%in%"5843aA",]
     Bathy <- raster::crop(bathymetry, raster::extent(Poly))
     Total_area <- raster::mask(Bathy,Poly)
-
+    
     if(fishable_area==TRUE){
       Poly_mask <- Total_area > -1800 & Total_area < -600
       Fishable_area <- raster::mask(Total_area, Poly_mask, maskvalue=0)
       # estimate total planimetric area
       plan_area[area_names%in%name,1:3]<- c(as.character(name),sum_area(Total_area),sum_area(Fishable_area))
-
-      if(save_fishable_seabed_plots==TRUE){
-
-        # this plot will save in current wd - potentially modify to establish a folder etc
-        png(paste(name,"_bathymetry_600_1800m_area.png",sep=""))
-        par(mar=c(2,1,2,1))
-        plot(Fishable_area,col=terrain.colors(255),main=paste(name,"_bathymetry_600_1800m_area",sep=""),axes=FALSE,box=FALSE)
-        plot(Poly,add=TRUE,xaxt="n",yaxt="n",axes=FALSE)
-        dev.off()
-        # could potentially add graticules to plot
-        #   plot(grat, add = TRUE, lty = 3,lwd=1.5)
-        #   text(labs, lab = parse(text= labs$lab), col= "black", cex = 1)
-      }
     }else{
-      plan_area[area_names%in%name,1:2]<- c(as.character(name),sum_area(Total_area))
+      
+
+    Depth_strata_reclass=reclassify(Total_area,depth_class_mat)
+    
+    new_df <- matrix(nrow=length(depth_classes),ncol=2)
+    new_df[,1] <- depth_class_mat[,3]
+    class_freq=raster::freq(Depth_strata_reclass,useNA="no")
+    new_df[new_df[,1]%in%class_freq[,1],]= class_freq
+    new_df[!new_df[,1]%in%class_freq[,1],2]= 0
+    
+    # summarise planimetric area by depth interval
+    sum_area_depth_class=(new_df[,2]*raster::xres(Bathy)*raster::yres(Bathy))/1e6
+    sum_area_depth_class=round(sum_area_depth_class,2)
+
+    plan_area[area_names%in%name,]<- c(as.character(name),sum(sum_area_depth_class),sum_area_depth_class)
     }
   }
   plan_area
