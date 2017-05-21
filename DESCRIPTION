@@ -15,4 +15,4 @@ VignetteBuilder: knitr
 Description: Implemention of models for the estimation of biomass in CCAMLR fisheries.
 License: GPL-3
 LazyData: TRUE
-RoxygenNote: 6.0.0
+RoxygenNote: 6.0.1
