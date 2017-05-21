@@ -101,7 +101,7 @@ process_recaptures <- function(data, location, species, select=NULL, ...){
     d <- data[data[["SPECIES_CODE_RECAPTURE"]] %in% species &
                 data[["RESEARCH_BLOCK_CODE_RELEASE"]] %in% location &
                 data[["RESEARCH_BLOCK_CODE_RECAPTURE"]] %in% location, select]
-      }else stop("Incorrect location format specified")
+  }else stop("Incorrect location format specified")
   ## create date fields for release and recapture
   d <- process_date(d, column="DATE_TAGGED", prefix="Release")
   d <- process_date(d, column="DATE_RECAPTURED", prefix="Recapture")
@@ -134,6 +134,54 @@ extract_releases <- function(data, seasons, ...){
   rels
 }
 
+#' Extract recaptures Season
+#'
+#' Extract recapture data for calculation of biomass for a CCAMLR Season
+#' @param data tag release and recapture data with fields SEASON_RELEASE,
+#' SEASON_RECAPTURE 
+#' @param rel_seasons vector of tag release seasons
+#' @param ... additional arguments
+#' @importFrom plyr ddply
+#' @export
+extract_recaptures_season <- function(data, rel_seasons){
+  ## define an array to store recaps by season and month of release and recapture
+  # subtract the first year of releases as we dont want to include within season recaptures 
+  # sort release seasons
+  Release_data <- data$Releases[data$Releases[["SEASON"]]%in%rel_seasons,]
+  Recapture_data <- data$Recaptures[data$Recaptures[["SEASON_RECAPTURE"]]%in%rel_seasons,]
+  # remove within seasons recaps
+  Recapture_data <- Recapture_data[Recapture_data[["SEASON_RECAPTURE"]]!=Recapture_data[["SEASON_RELEASE"]],]
+  
+  rel_seasons <- sort(rel_seasons)
+  tag_data <- matrix(0, length(rel_seasons),length(rel_seasons)+2)
+  tag_data <- data.frame(tag_data)
+  names(tag_data)<-c("Year","Releases",rel_seasons)
+  tag_data$Year <- rel_seasons 
+  Releases <- ddply(Release_data,.(SEASON),nrow)
+  tag_data$Releases[tag_data$Year%in%Releases$SEASON]<- Releases$V1
+  
+  ## loop to fill the array
+  # for(i in 1:length(recap_seasons)){
+  for(k in 1:length(rel_seasons)){
+    recaps <- ddply(Recapture_data[Recapture_data[["SEASON_RELEASE"]] == rel_seasons[k],],.(SEASON_RECAPTURE),nrow)
+    tag_data[k,names(tag_data)%in%recaps$SEASON_RECAPTURE] <- recaps$V1 
+    
+    #   removes within season recaps but dont think you need it 
+    #data[["SEASON_RECAPTURE"]]!=rel_seasons[k]
+  }
+  # }
+  
+  #* consider adding a class
+  ## return the array of recaptures
+  # turn into dataframe
+  tag_data
+}
+
+
+
+
+
+
 #' Extract recaptures
 #'
 #' Extract recapture data for calculation of biomass
@@ -154,12 +202,12 @@ extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
   ## loop to fill the array
   for(i in 1:length(recap_seasons)){
     for(j in 1:n_months){
-       for(k in 1:length(rel_seasons)){
-         for(l in 1:n_months){
-           recaps[k, l, j, i] <- nrow(data[data[["SEASON_RELEASE"]] == rel_seasons[k] &
-                                        data[["Release_CCAMLR_Month"]] == l &
-                                        data[["SEASON_RECAPTURE"]] == recap_seasons[i] &
-                                        data[["Recapture_CCAMLR_Month"]] == j,])
+      for(k in 1:length(rel_seasons)){
+        for(l in 1:n_months){
+          recaps[k, l, j, i] <- nrow(data[data[["SEASON_RELEASE"]] == rel_seasons[k] &
+                                            data[["Release_CCAMLR_Month"]] == l &
+                                            data[["SEASON_RECAPTURE"]] == recap_seasons[i] &
+                                            data[["Recapture_CCAMLR_Month"]] == j,])
         }
       }
     }
@@ -168,6 +216,50 @@ extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
   ## return the array of recaptures
   recaps
 }
+
+
+#' Extract haul data 
+#'
+#' Extract recapture data for calculation of biomass
+#' @param data catch and tag recapture data
+#' SEASON_RECAPTURE and Recapture_CCAMLR_Month
+#' @param rel_seasons vector of tag release seasons
+#' @param measure "numbers" if fish numbers are required or "weights" if fish weights are required
+#' @import plyr reshape2 
+#' @export
+extract_catch_data <- function(data, rel_seasons,measure){
+  ## define an array to store recaps by season and month of release and recapture
+  # subtract the first year of releases as we dont want to include within season recaptures 
+  # sort release seasons
+  Catch_data <- data$Catch[data$Catch[["Season"]]%in%rel_seasons[length(rel_seasons)],]
+  Recapture_data <- data$Recaptures[data$Recaptures[["SEASON_RECAPTURE"]]%in%rel_seasons[length(rel_seasons)],]
+  # remove within seasons recaps
+  Recapture_data <- Recapture_data[Recapture_data[["SEASON_RECAPTURE"]]!=Recapture_data[["SEASON_RELEASE"]],]
+  # count recaptures per haul
+  N_recaps_haul_by_haul=ddply(Recapture_data,.(CRUISE_ID_RECAPTURE,SET_ID_RECAPTURE,SPECIES_CODE_RECAPTURE,SEASON_RELEASE),nrow)
+  
+  names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="V1"]="N_recaptures"
+  names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="CRUISE_ID_RECAPTURE"]="CRUISE_ID"
+  names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="SET_ID_RECAPTURE"]="SET_ID"
+  names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="SPECIES_CODE_RECAPTURE"]="SPECIES_CODE"
+  catch_recap_data=join(Catch_data,N_recaps_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+  
+  switch(measure,
+    numbers = catch_recap_data <-subset(catch_recap_data,select=c(CAUGHT_N_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE)),
+    weights = catch_recap_data <-subset(catch_recap_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
+  )
+  # reshape to make each release season a column 
+  catch_recap_data <- dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_N_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
+  catch_recap_data<-catch_recap_data[,!names(catch_recap_data)%in%c("NA","CRUISE_ID","SET_ID","SPECIES_CODE")]
+  # replace NA N_recapture values with zero
+  catch_recap_data[is.na(catch_recap_data)]<- 0
+  catch_recap_output<-data.frame(matrix(0,nrow=nrow(Catch_data),ncol=length(rel_seasons)+1))
+  names(catch_recap_output)<-c(names(catch_recap_data)[1],rel_seasons)
+  catch_recap_output[,names(catch_recap_output)%in%names(catch_recap_data)]<-catch_recap_data
+  
+  catch_recap_output
+}
+
 
 #' Process data for the multiple release function
 #'
