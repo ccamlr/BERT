@@ -4,10 +4,10 @@
 \alias{load_bathy_data}
 \title{Load GEBCO bathymetry data}
 \usage{
-load_bathy_data(data_dir)
+load_bathy_data(update = TRUE)
 }
 \arguments{
-\item{data_dir}{is the directory into which the most current bathymetry data
+\item{update}{is TRUE if you want to load the most current bathymetry data from the CCAMLRGIS website or FALSE if you want to use the data that is stored in the package
 (gebco 2014 30-arc second grid) will be downloaded and stored}
 }
 \description{

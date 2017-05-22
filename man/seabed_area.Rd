@@ -4,15 +4,11 @@
 \alias{seabed_area}
 \title{Calculate planimetric seabed area}
 \usage{
-seabed_area(bathymetry, ROI, ROI_name, fishable_area,
-  save_fishable_seabed_plots)
+seabed_area(bathymetry, ROI, ROI_name, fishable_area, depth_classes = NA)
 }
 \arguments{
 \item{bathymetry}{is data in a raster file format upon which the calculation
-is based, it is assumed that all bathymetry values above zero have been removed}
-
-\item{ROI}{is the Region of Interest, this is assumed to be in a
-SpatialPolygonDataframe (SPDF) format}
+is based, it is assumed that all bathymetry values above zero have been removed.}
 
 \item{ROI_name}{is the name of the vector in the ROI that contains the
 relevant polygon names/labels}
@@ -20,8 +16,7 @@ relevant polygon names/labels}
 \item{fishable_area}{is TRUE if you would like to calculate the planimetric
 seabed area in the fishable depth range (i.e. 800-1600m)}
 
-\item{save_fishable_seabed_plots}{is TRUE if you woud like to save plots of
-the fishable seabed area within the ROI}
+\item{depth_classes}{is a vector of the text strings that indicate the min and max within each depth class e.g. c("0-600","600-1800","1800-max")}
 }
 \description{
 Calculate planimetric seabed area
