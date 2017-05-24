@@ -141,7 +141,7 @@ extract_releases <- function(data, seasons, ...){
 #' SEASON_RECAPTURE 
 #' @param rel_seasons vector of tag release seasons
 #' @param ... additional arguments
-#' @importFrom plyr ddply
+#' @import plyr
 #' @export
 extract_recaptures_season <- function(data, rel_seasons){
   ## define an array to store recaps by season and month of release and recapture
@@ -157,7 +157,7 @@ extract_recaptures_season <- function(data, rel_seasons){
   tag_data <- data.frame(tag_data)
   names(tag_data)<-c("Year","Releases",rel_seasons)
   tag_data$Year <- rel_seasons 
-  Releases <- ddply(Release_data,.(SEASON),nrow)
+  Releases <- ddply(Release_data, .(SEASON), "nrow")
   tag_data$Releases[tag_data$Year%in%Releases$SEASON]<- Releases$V1
   
   ## loop to fill the array
@@ -225,9 +225,10 @@ extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
 #' SEASON_RECAPTURE and Recapture_CCAMLR_Month
 #' @param rel_seasons vector of tag release seasons
 #' @param measure "numbers" if fish numbers are required or "weights" if fish weights are required
-#' @import plyr reshape2 
+#' @importFrom plyr ddply
+#' @importFrom reshape2 dcast 
 #' @export
-extract_catch_data <- function(data, rel_seasons,measure){
+extract_catch_data <- function(data, rel_seasons,measure,mean_fish_weight){
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
@@ -245,32 +246,43 @@ extract_catch_data <- function(data, rel_seasons,measure){
   names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="SET_ID_RECAPTURE"]="SET_ID"
   names(N_recaps_haul_by_haul)[names(N_recaps_haul_by_haul)=="SPECIES_CODE_RECAPTURE"]="SPECIES_CODE"
   catch_recap_data=join(Catch_data,N_recaps_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
-  
-  
-  if (measure=="weights"){
-    # sum estimated weight of all fish released per haul
-    Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),
-                                       function(x){sum(x$EST_WEIGHT_KG)})
-    
-    names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="Total_kg_released"
-    catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
-    # assume NA values Total_kg_released values are zero
-    catch_recap_release_data$Total_kg_released[is.na(catch_recap_release_data$Total_kg_released)]=0
-    
-    # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors 
-    catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]=0
-    
-    catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Total_kg_released
-  }
-  
+
   switch(measure,
          numbers = {
-           catch_recap_data <-subset(catch_recap_data,select=c(CAUGHT_N_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
-           catch_recap_data <- dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_N_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
+           # sum estimated weight of all fish released per haul
+           Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),nrow)
+           names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="N_released"
            
-           },
-         weights = {catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
-         catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
+           catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+           # assume NA values Total_kg_released values are zero
+           catch_recap_release_data$N_released[is.na(catch_recap_release_data$N_released)]=0
+           
+           # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors 
+           catch_recap_release_data$CAUGHT_N_TOTAL[is.na(catch_recap_release_data$CAUGHT_N_TOTAL)]=0
+           
+           catch_recap_release_data$CAUGHT_N_TOTAL=catch_recap_release_data$CAUGHT_N_TOTAL+catch_recap_release_data$N_released
+           
+           catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_N_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
+           catch_recap_data <- dcast(catch_recap_release_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_N_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
+           
+         },
+         weights = {
+           # sum estimated weight of all fish released per haul
+           Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),nrow)
+           names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="Est_kg_released"
+           Weight_releases_haul_by_haul$Est_kg_released<- Weight_releases_haul_by_haul$Est_kg_released*mean_fish_weight
+           
+           catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+           # assume NA values Total_kg_released values are zero
+           catch_recap_release_data$Total_kg_released[is.na(catch_recap_release_data$Total_kg_released)]=0
+           
+           # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors 
+           catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]=0
+           
+           catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Total_kg_released
+           
+           catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
+           catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
          }
   )
   
