@@ -5,7 +5,7 @@
 #' @format Raster Layer
 #' \decribe{
 #' \item{Driver} {GTiff/GeoTIFF}
-#' Files:GEBCO/GEBCO2014_final/CCAMLRGIS/GEBCO_2014_geotiff_projected_cubic_resample_500_500m_depths_600_1800m2016-04-27.tif
+#' Files:CCAMLR/DataCentre/GISData/GEBCO/GEBCO_2014_600_1800m/GEBCO_2014_geotiff_projected_cubic_resample_500_500m_depths_600_1800m2016-04-27.tif
 #' Size is 21591, 21591
 #' Coordinate System is:
 #'   PROJCS["unnamed",
