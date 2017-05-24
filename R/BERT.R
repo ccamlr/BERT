@@ -17,8 +17,8 @@
 #' @docType package
 #' @name BERT
 #' @importFrom grDevices dev.off png terrain.colors
-#' @importFrom graphics par plot
-#' @importFrom raster crop extent freq mask raster xres yres
+#' @importFrom graphics par
+#' @importFrom raster crop extent freq mask raster xres yres plot
 #' @importFrom stats median rlnorm
 #' @importFrom utils download.file read.csv
 NULL
