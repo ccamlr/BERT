@@ -123,10 +123,12 @@ summary.cpuesamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
                      probs=quantiles, na.rm=TRUE)
   se <- sd(object$Boot_estimates, na.rm=TRUE)
   cv <- se / object$cpue_area_obj$est
+  est <- object$cpue_area_obj$est
   names(se) <- "boot_SE"
   names(cv) <- "boot_CV"
+  names(est) <- "Est"
   ## construct the output
-  out <- c(object$cpue_area_obj$est, se, cv, quants)
-  #names(out) <- c("Estimate", "lower", "upper")
+  out <- c(est, se, cv, quants)
+  # return the bootstrapped estimates
   out
 }
