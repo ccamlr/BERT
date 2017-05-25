@@ -5,8 +5,9 @@ documentation of bathy_data has been added but needs to be revised
 
 ## ISSUES
 
-load_bathy_data function currently not working - bathymetry data needs to be loaded prior to applying the seabed_area function 
+load_bathy_data function has been removed and bathymetry data is stored in data folder of the package
 
+bootstrap function for cpue by seabed area method is currently not working
 
 ## BERT VERSION 0.1.0
 

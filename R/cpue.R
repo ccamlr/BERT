@@ -93,20 +93,33 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
                          ref_CPUE = boot_ref_CPUE, ref_area = x$data["ref_area"],
                          ref_bio = boot_ref_bio)
   }
-  # Bfish is zero if fishCPUE = 0 AND refCPUE > 0
-  # Bfish.zero <- sum(Bfish==0, na.rm = TRUE)
-  # # Bfish is infinite if fishCPUE > 0 AND refCPUE = 0
-  # Bfish.Inf <- sum(is.infinite(Bfish))
-  # # Bfish is Nan if fishCPUE = 0 AND refCPUE = 0
-  # Bfish.NaN <- sum(is.nan(Bfish))
-  # Bfish <- Bfish[!is.infinite(Bfish)&!is.nan(Bfish)&Bfish!=0]
   ## create an output list
-  # res <- list ...
-  # out <- list(pos.Bfish=Bfish,
-  #             prop.zero=Bfish.zero/nboot,
-  #             prop.Inf=Bfish.Inf/nboot,
-  #             prop.NaN=Bfish.NaN/nboot)
-  # ## return the output list
-  # out
+  obj <- list("cpue_area_obj" = x,
+              "Boot_estimates" = boot_res)
+  ## add a class
+  class(obj) <- "cpuesamples"
+  ## return the results
+  obj
 }
 
+#' S3 method for bootstrapped confidence intervals
+#'
+#' Calculate bootstrapped confidence intervals for object of
+#' class cpuesamples
+#' @param object object of class bsamples
+#' @param quantiles bootstrap quantiles (default 0.025, 0.5, 0.975)
+#' @param ... additional parameters
+#' @export
+summary.cpuesamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
+  ## define the quantiles
+  quants <- quantile(object$Boot_estimates, 
+                     probs=quantiles, na.rm=TRUE)
+  se <- sd(object$Boot_estimates, na.rm=TRUE)
+  cv <- se / object$cpue_area_obj$est
+  names(se) <- "boot_SE"
+  names(cv) <- "boot_CV"
+  ## construct the output
+  out <- c(object$cpue_area_obj$est, se, cv, quants)
+  #names(out) <- c("Estimate", "lower", "upper")
+  out
+}
