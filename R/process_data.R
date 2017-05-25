@@ -271,11 +271,12 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
            catch_release_data$CAUGHT_KG_TOTAL[is.na(catch_release_data$CAUGHT_KG_TOTAL)]=0
            
            catch_release_data$CAUGHT_KG_TOTAL=catch_release_data$CAUGHT_KG_TOTAL+catch_release_data$Est_kg_released
+           catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
            
-           catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_TOTAL,CRUISE_ID,SET_ID,SPECIES_CODE))
-           catch_release_data$CAUGHT_KG_TOTAL[!catch_release_data$SPECIES_CODE%in%target_species]=0
+           catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
+           catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE%in%target_species]=0
            # reshape to make each release season a column 
-           catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_TOTAL)
+           catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
          }
   )
   
