@@ -89,7 +89,8 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
     boot_fish_CPUE <- median(sample(x$data[["fish_CPUE"]], 
                                     length(x$data[["fish_CPUE"]]), 
                                     replace=TRUE), na.rm=TRUE)
-    boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]], 1, 
+    boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]],
+                                   length(x$data[["ref_CPUE"]]),
                                    replace=TRUE), na.rm=TRUE)
     boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
                            sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
