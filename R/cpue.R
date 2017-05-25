@@ -20,6 +20,8 @@
 cpue_bio <- function(fish_CPUE, fish_area, ref_CPUE ,ref_area, ref_bio){
   ## calculate the biomass
   bio <- (fish_CPUE * fish_area * ref_bio)/(ref_CPUE * ref_area)
+  ## check replace infinity with NA
+  if(is.infinite(bio)) bio <- NA
   ## return the biomass
   bio
 }
