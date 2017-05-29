@@ -235,9 +235,9 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
   Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons[length(catch_seasons)],]
-
+  
   Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons[length(catch_seasons)],]
-
+  
   switch(measure,
          numbers = {
            # sum estimated weight of all fish released per haul
@@ -280,8 +280,6 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
          }
   )
   
-  
-
   catch_release_data
 }
 
@@ -306,6 +304,7 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
   # remove within seasons recaps
   Recapture_data <- Recapture_data[Recapture_data[["SEASON_RECAPTURE"]]!=Recapture_data[["SEASON_RELEASE"]],]
   
+  # this is only used in calculating susbtantial catch for the current season 
   Release_data <-data$Releases[data$Releases[["SEASON"]]%in%rel_seasons[length(rel_seasons)],]
   # count recaptures per haul
   N_recaps_haul_by_haul=ddply(Recapture_data,.(CRUISE_ID_RECAPTURE,SET_ID_RECAPTURE,SPECIES_CODE_RECAPTURE,SEASON_RELEASE),nrow)
@@ -336,22 +335,44 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
            
          },
          weights = {
-           # sum estimated weight of all fish released per haul
-           Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),nrow)
-           names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="Est_kg_released"
-           Weight_releases_haul_by_haul$Est_kg_released<- Weight_releases_haul_by_haul$Est_kg_released*mean_fish_weight
-           
-           catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
-           # assume NA values Total_kg_released values are zero
-           catch_recap_release_data$Est_kg_released[is.na(catch_recap_release_data$Est_kg_released)]=0
-           
-           # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors 
-           catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]=0
-           
-           catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Est_kg_released
+           if(any(names(Release_data)%in%"EST_WEIGHT_KG")){
+             # 
+             # names(catch_recap_data)[names(catch_recap_data)%in%"Season"]="SEASON"
+             # catch_recap_release_data=join(catch_recap_data,Release_data,by=c("CRUISE_ID","SET_ID","SPECIES_CODE","SEASON"))
+             # catch_recap_release_data=join(catch_recap_data,Release_data,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+             # 
+             # sum estimated weight of all fish released per haul
+             Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,RESEARCH_BLOCK_CODE,SEASON),
+                                                function(x){sum(x$EST_WEIGHT_KG)})
+             
+             names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="Total_kg_released"
+             catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+             # assume NA values Total_kg_released values are zero
+             catch_recap_release_data$Total_kg_released[is.na(catch_recap_release_data$Total_kg_released)]=0
+             
+             # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors
+             catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]=0
+             
+             catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Total_kg_released
+             
+           }else{
+             # sum estimated weight of all fish released per haul
+             Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),nrow)
+             names(Weight_releases_haul_by_haul)[names(Weight_releases_haul_by_haul)=="V1"]="Est_kg_released"
+             Weight_releases_haul_by_haul$Est_kg_released<- Weight_releases_haul_by_haul$Est_kg_released*mean_fish_weight
+             
+             catch_recap_release_data=join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+             # assume NA values Total_kg_released values are zero
+             catch_recap_release_data$Est_kg_released[is.na(catch_recap_release_data$Est_kg_released)]=0
+             
+             # assume NA value in CAUGHT_KG_TOTAL data are zero, but checking this data with Dave for any potential processing errors 
+             catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]=0
+             
+             catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Est_kg_released
+           }
            
            catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
-           catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE+ CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
+           catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE + CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
          }
   )
   
@@ -367,6 +388,75 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
   catch_recap_output
 }
 
+
+#' Estimate weight of released fish from length
+#'
+#' Extract catch data for cpue by seabed area biomass
+#' @param data Data object with all data extracts
+#' @importFrom stats lm
+#' @export
+
+release_weight_est <- function(data){
+  
+  # estimate weight of released fish that will be added to total catch in each Subarea
+  ASDs=unique(Data$Length_weight[["ASD_CODE"]])
+  
+  Species=unique(Data$Length_weight[["SPECIES_CODE"]])
+  
+  length_weight_parameters=matrix(ncol=7,nrow=0)
+  
+  for (Sp in Species){
+    
+    for (ASD in ASDs) {
+      
+      data_temp=Data$Length_weight[Data$Length_weight[["ASD_CODE"]]%in%ASD & Data$Length_weight[["SPECIES_CODE"]]%in%Sp,]
+      if(nrow(data_temp)>0){
+        
+        # Paul is going to examine the choice of model for lw relationship in more detail
+        thisLWT=lm(log(WEIGHT_KG)~log(LENGTH_CM),data=data_temp)
+        # get correction factor for back transformation
+        syx = summary(thisLWT)$sigma
+        cf = exp((syx^2)/2)
+        lwtIntercept_1=as.numeric(exp(thisLWT$coefficients["(Intercept)"]))
+        lwtIntercept_2=as.numeric(thisLWT$coefficients["(Intercept)"])
+        lwtSlope=as.numeric(thisLWT$coefficients["log(LENGTH_CM)"])
+        lwtMSE=mean((thisLWT$residuals)^2)
+        
+        if(nrow(length_weight_parameters)==0){
+          length_weight_parameters=cbind(Sp,ASD,lwtIntercept_1,lwtIntercept_2,lwtSlope,lwtMSE,cf)}
+        else{
+          length_weight_parameters=rbind(length_weight_parameters,cbind(Sp,ASD,lwtIntercept_1,lwtIntercept_2,lwtSlope,lwtMSE,cf))
+          
+        }
+      }
+    }
+  }
+  
+  length_weight_parameters=data.frame(length_weight_parameters)
+  names(length_weight_parameters)=c("SPECIES_CODE","ASD_CODE","INTERCEPT1","INTERCEPT2","SLOPE","MSE","CF")
+  
+  
+  # apply length weight relationship parameter estimates to lengths in tagging data to estimate weight of fish released
+  for (Sp in Species){
+    
+    for (ASD in ASDs) {
+      
+      index_releases=Data$Releases[["SPECIES_CODE"]]%in%Sp & Data$Releases[["ASD_CODE"]]%in%ASD
+      index_param=length_weight_parameters$SPECIES_CODE%in%Sp & length_weight_parameters$ASD_CODE%in%ASD
+      
+      if(nrow(length_weight_parameters[index_param,])>0 & nrow(data_store_release[index_releases,])>0){
+        a=as.numeric(as.character(length_weight_parameters$INTERCEPT2[index_param]))
+        b=as.numeric(as.character(length_weight_parameters$SLOPE[index_param]))
+        cf=as.numeric(as.character(length_weight_parameters$CF[index_param]))
+        # apply correction factor
+        Data$Releases$EST_WEIGHT_KG[index_releases]=exp(a+b*log(Data$Releases$LENGTH_CM[index_releases]))*cf
+      }
+      
+    }
+  }
+  
+  Data
+}
 
 
 
