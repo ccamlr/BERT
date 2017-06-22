@@ -45,33 +45,3 @@ specify_params <- function(seasons, tag_mort, tag_shed, chronic_mort, report,
   ## return the list of parameter matrices
   obj
 }
-
-#' Chapman estimate of biomass
-#'
-#' Chapman estimate of biomass
-#' @param avail_tags the available tags
-#' @param recaps tag recaptures
-#' @param catch the catch in the same units as mean weight
-#' @param mean_wt mean weight of a fish in the same units as catch (default = 0)
-#' @export
-chapman_wt <- function(avail_tags, recaps, catch, mean_wt=0){#, do_check=FALSE){
-  ## check function inputs
-  # if(do_check){
-  #   check <- check_tag_inputs(avail_tags, recaps, catch, mean_wt)
-  # }
-  # ## if check passes calculate population size
-  # if(check){
-    ## calculate the estimate
-    N_hat <- (((avail_tags + 1)*(catch + mean_wt))/(recaps + 1)) - mean_wt
-    ## calculate the variance
-    var_N <- ((avail_tags + 1)*(catch + mean_wt)*(avail_tags - recaps)*(catch - mean_wt*recaps))/
-      (((recaps + 1)^2)*(recaps + 2))
-    obj <- c(N_hat, var_N)
-  # }else{
-  #   obj <- c(NA, NA)
-  # }
-  ## add some names
-  names(obj) <- c("N_hat", "var_N")
-  ## return the Chapman estimate of biomass
-  obj
-}
