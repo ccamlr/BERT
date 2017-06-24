@@ -141,7 +141,7 @@ extract_releases <- function(data, seasons, ...){
 #' SEASON_RECAPTURE 
 #' @param rel_seasons vector of tag release seasons
 #' @param ... additional arguments
-#' @import plyr
+#' @importFrom plyr ddply
 #' @export
 #' 
 extract_recaptures_season <- function(data, rel_seasons){
@@ -319,7 +319,7 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
 #' @param measure "numbers" if fish numbers are required or "weights" if fish weights are required
 #' @param mean_fish_weight is the mean weight of a fish to estimate the fish release weights per haul from
 #' @importFrom plyr ddply
-#' @importFrom reshape2 dcast 
+#' @importFrom reshape2 dcast
 #' @export
 
 extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weight){
