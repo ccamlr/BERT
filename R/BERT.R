@@ -21,5 +21,7 @@
 #' @importFrom raster crop extent freq mask raster xres yres plot
 #' @importFrom stats median rlnorm
 #' @importFrom utils download.file read.csv
+#' @importFrom plyr ddply
+#' @importFrom reshape2 dcast
 NULL
 #> NULL
