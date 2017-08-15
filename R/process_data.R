@@ -6,11 +6,14 @@
 #' the CCAMLR month (Dec=1, ... Nov=12)
 #' @param data CCAMLR data extract
 #' @param column name of the field to convert to a date
+#' @param splitdate if TRUE then calander months and ccamlr months will be generated
 #' @param prefix a prefix to be added to the new field names
 #' @param ... additional arguments
 #' @export
 process_date <- function(data, column, prefix = NULL, ...){
   if(!is.null(prefix)) prefix <- paste0(prefix, "_")
+  ## return specified Date column in desired date format
+  data[[column]]<- as.Date(data[[column]],"%Y-%m-%d %H:%M:%S",tz="UTC")
   ## take the data and create a date field from the specified column
   data[paste0(prefix, "Date")] <- as.Date(data[[column]],"%Y-%m-%d %H:%M:%S",tz="UTC")
   data[paste0(prefix, "Month_full")] <- months(data[[paste0(prefix, "Date")]], abbreviate = TRUE)
@@ -33,23 +36,29 @@ process_date <- function(data, column, prefix = NULL, ...){
 #' @param ... additional arguments
 #' @aliases process_releases process_recaptures
 #' @export
-process_catch <- function(data, location, species, seasons, select=NULL, ...){
+process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seasons=NULL, select=NULL, ...){
   ## some checks
-  if(length(location) > 1) stop("only one location may currently be specified")
-  if(length(species) > 1) stop("only one species may currently be specified")
-  if(!species %in% c("TOA", "TOP")) stop("species must be either 'TOA' or 'TOP'")
+
+  
+  if(!is.null(location)){
+    if(is.integer0(grep("_", location))){
+      ## if no '_' then location is an ASD_CODE
+      d <- data[data[["ASD_CODE"]] %in% location, select]
+    }else if(length(grep("_", location)==1)){
+      ## if 1 and only 1 '_' then location is a RESEARCH_BLOCK
+      d <- data[data[["RESEARCH_BLOCK_CODE_START_SET"]] %in% location, select]
+    }else stop("Incorrect location format specified")
+  }
+  if(!is.null(species)){
+    if(length(species) >1) stop("only one species may currently be specified")
+    if(!species %in% c("TOA", "TOP")) stop("species must be either 'TOA' or 'TOP'") 
+    d <- data[data[["SPECIES_CODE"]] %in% species, select]
+  }
+  
   ## if no fields specified select columns
   if(is.null(select)) select <- names(data)
   ## extract either a RB or ASD depending on how location is specified
-  if(is.integer0(grep("_", location))){
-    ## if no '_' then location is an ASD_CODE
-    d <- data[data[["SPECIES_CODE"]] %in% species &
-                data[["ASD_CODE"]] %in% location, select]
-  }else if(length(grep("_", location)==1)){
-    ## if 1 and only 1 '_' then location is a RESEARCH_BLOCK
-    d <- data[data[["SPECIES_CODE"]] %in% species &
-                data[["RESEARCH_BLOCK_CODE_START_SET"]] %in% location, select]
-  }else stop("Incorrect location format specified")
+ 
   ## create an R date field
   d <- process_date(d, column="SET_START_DATE")
   ## return the data
@@ -177,8 +186,6 @@ extract_recaptures_season <- function(data, rel_seasons){
   # turn into dataframe
   tag_data
 }
-
-
 
 
 
@@ -318,7 +325,6 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
 #' @param rel_seasons vector of release seasons 
 #' @param measure "numbers" if fish numbers are required or "weights" if fish weights are required
 #' @param mean_fish_weight is the mean weight of a fish to estimate the fish release weights per haul from
-#' @import plyr
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast
 #' @export
