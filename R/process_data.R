@@ -491,35 +491,3 @@ release_weight_est <- function(data){
   
   Data
 }
-
-
-
-
-#' Process data for the multiple release function
-#'
-#' Wrapper function over the three datasets, returns a list of three dataframes
-#' @param catch_data CCAMLR C2 data extract
-#' @param release_data CCAMLR tag release data extract
-#' @param recapture_data CCAMLR tag release and recapture data extract
-#' @param location either a ASD code or a research block (must be character format)
-#' @param species either "TOA" or "TOP"
-#' @param select_catch catch fields to select
-#' @param select_releases tag release fields to select
-#' @param select_recaptures tag recapture fields to select
-#' @param ... additional arguments
-#' @export
-process_tag_data <- function(catch_data, release_data, recapture_data, location, species,
-                             select_catch=NULL, select_releases=NULL,select_recaptures=NULL,   ...){
-  ## process the catch data
-  catch <- process_catch(catch_data, location, species, select_catch)
-  ## process the tag release data
-  releases <- process_releases(release_data, location, species, select_releases)
-  ## process the tag recapture data
-  recaptures <- process_recaptures(recapture_data, location, species, select_recaptures)
-  ## bundle into a list
-  obj <- list("Catch" = catch,
-              "Releases" = releases,
-              "Recaptures" = recaptures)
-  ## return the object
-  obj
-}
