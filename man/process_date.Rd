@@ -14,6 +14,8 @@ process_date(data, column, prefix = NULL, ...)
 \item{prefix}{a prefix to be added to the new field names}
 
 \item{...}{additional arguments}
+
+\item{splitdate}{if TRUE then calander months and ccamlr months will be generated}
 }
 \description{
 Takes a dataframe and converts one of the columns to R date format and creates
