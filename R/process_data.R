@@ -66,7 +66,7 @@ process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seaso
 }
 
 #' @export
-#' @rdname process_catch
+#' @rdname process_catch_chapman
 process_releases <- function(data, location, species, seasons, select=NULL, ...){
   ## some checks
   if(length(location) > 1) stop("only one location may currently be specified")
@@ -91,7 +91,7 @@ process_releases <- function(data, location, species, seasons, select=NULL, ...)
 }
 
 #' @export
-#' @rdname process_catch
+#' @rdname process_catch_chapman
 process_recaptures <- function(data, location, species, select=NULL, ...){
   ## some checks
   if(length(location) > 1) stop("only one location may currently be specified")
