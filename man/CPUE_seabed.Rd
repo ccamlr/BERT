@@ -5,7 +5,7 @@
 \title{CPUE Seabed area analogy}
 \usage{
 CPUE_seabed(fish_CPUE_data, fish_area, ref_CPUE_data, ref_area, ref_bio,
-  ref_bio_cv = 0, FUN = "median")
+  ref_bio_cv = 0, method = "median")
 }
 \arguments{
 \item{fish_CPUE_data}{vector of CPUE data from the research area}
@@ -20,7 +20,7 @@ CPUE_seabed(fish_CPUE_data, fish_area, ref_CPUE_data, ref_area, ref_bio,
 
 \item{ref_bio_cv}{CV of biomass estimate in reference area}
 
-\item{method}{method to calculate CPUE data (default="median")}
+\item{method}{method to calculate CPUE data either "mean" or "median" (default)}
 }
 \description{
 Calculate biomass using the CPUE seabed area analogy
