@@ -35,8 +35,58 @@ cpue_bio <- function(fish_CPUE, fish_area, ref_CPUE ,ref_area, ref_bio){
 #' @param ref_area habitat area (km2) in reference area
 #' @param ref_bio biomass estimate in reference area (I assume the units are in kg)
 #' @param ref_bio_cv CV of biomass estimate in reference area
+#' @param method method to calculate CPUE data either "mean" or "median" (default)
 #' @export
 CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
+                            ref_area, ref_bio, ref_bio_cv=0, method="median"){
+  ## check for missing CPUE values
+  if(any(is.na(fish_CPUE_data))) warning(paste0(length(fish_CPUE_data[which(is.na(fish_CPUE_data))]),
+                                                " NA values in the CPUE data that have been removed"))
+  if(any(is.na(ref_CPUE_data))) warning(paste0(length(ref_CPUE_data[which(is.na(ref_CPUE_data))]),
+                                               " NA values in the CPUE data that have been removed"))
+  ## remove NA CPUEs
+  fish_CPUE_data <- fish_CPUE_data[!ia.na(fish_CPUE_data)]
+  ref_CPUE_data <- ref_CPUE_data[!ia.na(ref_CPUE_data)]
+  ## calculate the CPUEs
+  ##** apply doens't work with vectors
+  if(method=="median"){
+    est_fish_CPUE <- median(fish_CPUE_data)
+    est_ref_CPUE <- median(ref_CPUE_data)
+  }else if(method=="mean"){
+    est_fish_CPUE <- mean(fish_CPUE_data)
+    est_ref_CPUE <- mean(ref_CPUE_data)
+  }
+  ## calculate the biomass
+  bio <- cpue_bio(fish_CPUE = est_fish_CPUE, fish_area = fish_area,
+                  ref_CPUE = est_ref_CPUE, ref_area = ref_area,
+                  ref_bio = ref_bio)
+  ## construct a list of the output
+  res <- list(data = list(fish_CPUE = fish_CPUE_data,
+                          ref_CPUE = ref_CPUE_data,
+                          fish_area = fish_area,
+                          ref_area = ref_area,
+                          ref_bio = ref_bio,
+                          ref_bio_cv = ref_bio_cv,
+                          FUN=FUN),
+              est = bio)
+  ## add an S3 class
+  class(res) <- "cpue_area"
+  ## return the object
+  res
+}
+
+
+#' CPUE Seabed area analogy (old implementation)
+#'
+#' Calculate biomass using the CPUE seabed area analogy
+#' @param fish_CPUE_data vector of CPUE data from the research area
+#' @param fish_area habitat area (km2) in research area
+#' @param ref_CPUE_data vector of CPUE data from reference area
+#' @param ref_area habitat area (km2) in reference area
+#' @param ref_bio biomass estimate in reference area (I assume the units are in kg)
+#' @param ref_bio_cv CV of biomass estimate in reference area
+#' @export
+CPUE_seabed_old <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                              ref_area, ref_bio, ref_bio_cv=0){
   ## check for missing CPUE values
   if(any(is.na(fish_CPUE_data))) warning(paste0(length(fish_CPUE_data[which(is.na(fish_CPUE_data))]),
