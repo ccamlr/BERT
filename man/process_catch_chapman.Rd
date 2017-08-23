@@ -4,10 +4,16 @@
 \alias{process_catch_chapman}
 \alias{process_releases}
 \alias{process_recaptures}
+\alias{process_releases}
+\alias{process_recaptures}
 \title{Process CCAMLR csv data extract}
 \usage{
 process_catch_chapman(data, isNA, location = NULL, species = NULL,
   seasons = NULL, select = NULL, ...)
+
+process_releases(data, location, species, seasons, select = NULL, ...)
+
+process_recaptures(data, location, species, select = NULL, ...)
 }
 \arguments{
 \item{data}{CCAMLR data extract}
