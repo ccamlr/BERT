@@ -3,6 +3,7 @@
 S3method(bootstrap,cpue_area)
 S3method(summary,cpuesamples)
 export(CPUE_seabed)
+export(CPUE_seabed_old)
 export(bootstrap)
 export(cpue_bio)
 export(extract_catch_data_cpue_est)
