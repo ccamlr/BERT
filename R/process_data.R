@@ -242,9 +242,9 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
-  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons[length(catch_seasons)],]
+  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons,]
   
-  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons[length(catch_seasons)],]
+  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons,]
   
   switch(measure,
          numbers = {
