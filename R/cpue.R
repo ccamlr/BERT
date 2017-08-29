@@ -4,7 +4,6 @@
 ## Permit the specification in the number of years of CPUE to include
 ## Permit zero CPUE hauls
 ## Allow for the uncertainty in the estimated biomass in the reference area (assume lognormal with cv)
-## Discuss vulnerable vs spawning biomass
 ##* stratification is just a loop
 
 
@@ -45,8 +44,8 @@ CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
   if(any(is.na(ref_CPUE_data))) warning(paste0(length(ref_CPUE_data[which(is.na(ref_CPUE_data))]),
                                                " NA values in the CPUE data that have been removed"))
   ## remove NA CPUEs
-  fish_CPUE_data <- fish_CPUE_data[!ia.na(fish_CPUE_data)]
-  ref_CPUE_data <- ref_CPUE_data[!ia.na(ref_CPUE_data)]
+  fish_CPUE_data <- fish_CPUE_data[!is.na(fish_CPUE_data)]
+  ref_CPUE_data <- ref_CPUE_data[!is.na(ref_CPUE_data)]
   ## calculate the CPUEs
   ##** apply doens't work with vectors
   if(method=="median"){
@@ -67,7 +66,7 @@ CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                           ref_area = ref_area,
                           ref_bio = ref_bio,
                           ref_bio_cv = ref_bio_cv,
-                          FUN=FUN),
+                          method=method),
               est = bio)
   ## add an S3 class
   class(res) <- "cpue_area"
@@ -109,6 +108,7 @@ CPUE_seabed_old <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                           ref_bio_cv = ref_bio_cv,
                           median_ref_CPUE = median_ref_CPUE,
                           median_fish_CPUE = median_fish_CPUE),
+                          method = "median"),
               est = bio)
   ## add an S3 class
   class(res) <- "cpue_area"
@@ -136,22 +136,42 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
   ## create a vector to store the results
   boot_res <- rep(NA, nboot)
   ## loop over the bootstrap replicates
-  for(i in 1:nboot){
-    ##* tidy this up
-    boot_fish_CPUE <- median(sample(x$data[["fish_CPUE"]], 
-                                    length(x$data[["fish_CPUE"]]), 
-                                    replace=TRUE), na.rm=TRUE)
-    boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]],
-                                   length(x$data[["ref_CPUE"]]),
-                                   replace=TRUE), na.rm=TRUE)
-    boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
-                           sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
-    ## Calculate the biomass in the fished area
-    boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
-                            fish_area = x$data[["fish_area"]],
-                            ref_CPUE = boot_ref_CPUE, 
-                            ref_area = x$data[["ref_area"]],
-                            ref_bio = boot_ref_bio)
+  if(x$data[["method"]] == "median"){
+    for(i in 1:nboot){
+      ##* tidy this up
+      boot_fish_CPUE <- median(sample(x$data[["fish_CPUE"]], 
+                                      length(x$data[["fish_CPUE"]]), 
+                                      replace=TRUE), na.rm=TRUE)
+      boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]],
+                                      length(x$data[["ref_CPUE"]]),
+                                      replace=TRUE), na.rm=TRUE)
+      boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
+                             sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      ## Calculate the biomass in the fished area
+      boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
+                              fish_area = x$data[["fish_area"]],
+                              ref_CPUE = boot_ref_CPUE, 
+                              ref_area = x$data[["ref_area"]],
+                              ref_bio = boot_ref_bio)
+    }
+  }else if(x$data[["method"]] == "mean"){
+    for(i in 1:nboot){
+      ##* tidy this up
+      boot_fish_CPUE <- mean(sample(x$data[["fish_CPUE"]], 
+                                      length(x$data[["fish_CPUE"]]), 
+                                      replace=TRUE), na.rm=TRUE)
+      boot_ref_CPUE <- mean(sample(x$data[["ref_CPUE"]],
+                                     length(x$data[["ref_CPUE"]]),
+                                     replace=TRUE), na.rm=TRUE)
+      boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
+                             sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      ## Calculate the biomass in the fished area
+      boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
+                              fish_area = x$data[["fish_area"]],
+                              ref_CPUE = boot_ref_CPUE, 
+                              ref_area = x$data[["ref_area"]],
+                              ref_bio = boot_ref_bio)
+    }
   }
   ## create an output list
   obj <- list("cpue_area_obj" = x,
