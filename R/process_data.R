@@ -38,7 +38,10 @@ process_date <- function(data, column, prefix = NULL, ...){
 #' @export
 process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seasons=NULL, select=NULL, ...){
   ## some checks
-
+  
+  
+  
+  
   
   if(!is.null(location)){
     if(is.integer0(grep("_", location))){
@@ -66,7 +69,7 @@ process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seaso
 }
 
 #' @export
-#' @rdname process_catch_chapman
+#' @rdname process_catch
 process_releases <- function(data, location, species, seasons, select=NULL, ...){
   ## some checks
   if(length(location) > 1) stop("only one location may currently be specified")
@@ -91,7 +94,7 @@ process_releases <- function(data, location, species, seasons, select=NULL, ...)
 }
 
 #' @export
-#' @rdname process_catch_chapman
+#' @rdname process_catch
 process_recaptures <- function(data, location, species, select=NULL, ...){
   ## some checks
   if(length(location) > 1) stop("only one location may currently be specified")
@@ -242,9 +245,9 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
-  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons,]
+  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons[length(catch_seasons)],]
   
-  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons,]
+  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons[length(catch_seasons)],]
   
   switch(measure,
          numbers = {
@@ -490,4 +493,36 @@ release_weight_est <- function(data){
   }
   
   Data
+}
+
+
+
+
+#' Process data for the multiple release function
+#'
+#' Wrapper function over the three datasets, returns a list of three dataframes
+#' @param catch_data CCAMLR C2 data extract
+#' @param release_data CCAMLR tag release data extract
+#' @param recapture_data CCAMLR tag release and recapture data extract
+#' @param location either a ASD code or a research block (must be character format)
+#' @param species either "TOA" or "TOP"
+#' @param select_catch catch fields to select
+#' @param select_releases tag release fields to select
+#' @param select_recaptures tag recapture fields to select
+#' @param ... additional arguments
+#' @export
+process_tag_data <- function(catch_data, release_data, recapture_data, location, species,
+                             select_catch=NULL, select_releases=NULL,select_recaptures=NULL,   ...){
+  ## process the catch data
+  catch <- process_catch(catch_data, location, species, select_catch)
+  ## process the tag release data
+  releases <- process_releases(release_data, location, species, select_releases)
+  ## process the tag recapture data
+  recaptures <- process_recaptures(recapture_data, location, species, select_recaptures)
+  ## bundle into a list
+  obj <- list("Catch" = catch,
+              "Releases" = releases,
+              "Recaptures" = recaptures)
+  ## return the object
+  obj
 }
