@@ -106,6 +106,8 @@ CPUE_seabed_old <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                           ref_area = ref_area,
                           ref_bio = ref_bio,
                           ref_bio_cv = ref_bio_cv,
+                          median_ref_CPUE = median_ref_CPUE,
+                          median_fish_CPUE = median_fish_CPUE),
                           method = "median"),
               est = bio)
   ## add an S3 class
