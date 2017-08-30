@@ -66,6 +66,8 @@ CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                           ref_area = ref_area,
                           ref_bio = ref_bio,
                           ref_bio_cv = ref_bio_cv,
+                          ref_CPUE_est = est_ref_CPUE,
+                          fish_CPUE_est = est_fish_CPUE,
                           method=method),
               est = bio)
   ## add an S3 class
@@ -107,8 +109,8 @@ CPUE_seabed_old <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
                           ref_bio = ref_bio,
                           ref_bio_cv = ref_bio_cv,
                           median_ref_CPUE = median_ref_CPUE,
-                          median_fish_CPUE = median_fish_CPUE),
-                          method = "median"),
+                          median_fish_CPUE = median_fish_CPUE,
+                          method = method),
               est = bio)
   ## add an S3 class
   class(res) <- "cpue_area"

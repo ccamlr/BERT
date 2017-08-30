@@ -38,11 +38,6 @@ process_date <- function(data, column, prefix = NULL, ...){
 #' @export
 process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seasons=NULL, select=NULL, ...){
   ## some checks
-  
-  
-  
-  
-  
   if(!is.null(location)){
     if(is.integer0(grep("_", location))){
       ## if no '_' then location is an ASD_CODE
@@ -241,13 +236,13 @@ extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast 
 #' @export
-extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_weight,target_species){
+extract_catch_data_cpue_est <- function(data,catch_seasons,measure,mean_fish_weight,target_species){
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
-  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons[length(catch_seasons)],]
+  Catch_data <- data$Catch[data$Catch[["Season"]]%in%catch_seasons,]
   
-  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons[length(catch_seasons)],]
+  Release_data <-data$Releases[data$Releases[["SEASON"]]%in%catch_seasons,]
   
   switch(measure,
          numbers = {
@@ -264,9 +259,8 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
            
            catch_release_data$CAUGHT_N_TOTAL=catch_release_data$CAUGHT_N_TOTAL+catch_release_data$N_released
            
-           catch_release_data <-subset(catch_release_data,select=c(CAUGHT_N_TOTAL,CRUISE_ID,SET_ID,SPECIES_CODE))
-           catch_release_data$CAUGHT_N_TOTAL[!catch_release_data$SPECIES_CODE%in%target_species]=0
-           catch_release_data<-subset(catch_release_data,select=CAUGHT_N_TOTAL)
+           # catch_release_data <-subset(catch_release_data,select=c(CAUGHT_N_TOTAL,CRUISE_ID,SET_ID,SPECIES_CODE))
+           # catch_release_data<-subset(catch_release_data,select=CAUGHT_N_TOTAL)
          },
          weights = {
            if(any(names(Release_data)%in%"EST_WEIGHT_KG")){
@@ -287,12 +281,12 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
              
              catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
              
-             catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
-             catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE%in%target_species]=0
-             # reshape to make each release season a column 
-             catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
-           }else{
+             # catch_release_data <-subset(catch_release_data,select=c(ID,CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
              
+            
+             # reshape to make each release season a column 
+             # catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
+           }else{
              # sum estimated weight of all fish released per haul
              if(nrow(Release_data)>0){
                Weight_releases_haul_by_haul=ddply(Release_data,.(CRUISE_ID,SET_ID,SPECIES_CODE,SEASON),nrow)
@@ -308,16 +302,28 @@ extract_catch_data_cpue_est <- function(data, catch_seasons,measure,mean_fish_we
                
                catch_release_data$CAUGHT_KG_TOTAL=catch_release_data$CAUGHT_KG_TOTAL+catch_release_data$Est_kg_released
              }else{catch_release_data <- Catch_data}
+             
+             
              catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
              
-             catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
-             catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE%in%target_species]=0
+             # catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
+        
+             
              # reshape to make each release season a column 
-             catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
+             # catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
            }
          }  
   )
-  catch_release_data
+  
+  # if SPECIES_CODE catch is not the target species then set the catch to zero 
+  catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE%in%target_species]=0
+  
+  # remove duplicate sets where both TOP and TOA were caught (i.e. a zero catch record from a non-target species will only count if there was no target species caught)
+  # this should be C2.ID as there may be hauls that dont have an observed CRUISE and SET ID
+  
+  catch_release_data <- catch_release_data[!duplicated(catch_release_data$ID),]
+  
+  catch_release_data <- subset(catch_release_data,select=CAUGHT_KG_KM)
 }
 
 #' Extract haul data 
