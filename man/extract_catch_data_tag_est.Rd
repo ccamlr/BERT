@@ -4,7 +4,8 @@
 \alias{extract_catch_data_tag_est}
 \title{Extract haul data}
 \usage{
-extract_catch_data_tag_est(data, rel_seasons, measure, mean_fish_weight)
+extract_catch_data_tag_est(data, rel_seasons, measure, mean_fish_weight,
+  target_species)
 }
 \arguments{
 \item{data}{catch and tag recapture data
