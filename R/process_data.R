@@ -64,7 +64,7 @@ process_catch_chapman <- function(data, isNA, location=NULL, species=NULL, seaso
 }
 
 #' @export
-#' @rdname process_catch
+#' @rdname process_releases
 process_releases <- function(data, location, species, seasons, select=NULL, ...){
   ## some checks
   if(length(location) > 1) stop("only one location may currently be specified")
@@ -334,6 +334,7 @@ extract_catch_data_cpue_est <- function(data,catch_seasons,measure,mean_fish_wei
 #' @param rel_seasons vector of release seasons 
 #' @param measure "numbers" if fish numbers are required or "weights" if fish weights are required
 #' @param mean_fish_weight is the mean weight of a fish to estimate the fish release weights per haul from
+#' @param target_species is the species that is targetted in the research block or reference area
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast
 #' @export
