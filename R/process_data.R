@@ -338,7 +338,7 @@ extract_catch_data_cpue_est <- function(data,catch_seasons,measure,mean_fish_wei
 #' @importFrom reshape2 dcast
 #' @export
 
-extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weight){
+extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weight,target_species){
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
@@ -414,11 +414,21 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
              catch_recap_release_data$CAUGHT_KG_TOTAL=catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$Est_kg_released
            }
            
+           
+           # if SPECIES_CODE catch is not the target species then set the catch to zero 
+           catch_recap_data$CAUGHT_KG_TOTAL[!catch_recap_data$SPECIES_CODE%in%target_species]=0
+           
+           # remove duplicate sets where both TOP and TOA were caught (i.e. a zero catch record from a non-target species will only count if there was no target species caught)
+           # this should be C2.ID as there may be hauls that dont have an observed CRUISE and SET ID
+           
+           catch_recap_data <- catch_recap_data[!duplicated(catch_recap_data$ID),]
+           
            catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
            catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE + CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
          }
   )
   
+
   
   # reshape to make each release season a column 
   catch_recap_data<-catch_recap_data[,!names(catch_recap_data)%in%c("NA","CRUISE_ID","SET_ID","SPECIES_CODE")]
