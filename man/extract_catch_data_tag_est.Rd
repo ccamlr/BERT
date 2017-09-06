@@ -16,6 +16,8 @@ SEASON_RECAPTURE and Recapture_CCAMLR_Month}
 \item{measure}{"numbers" if fish numbers are required or "weights" if fish weights are required}
 
 \item{mean_fish_weight}{is the mean weight of a fish to estimate the fish release weights per haul from}
+
+\item{target_species}{is the species that is targetted in the research block or reference area}
 }
 \description{
 Extract catch data for cpue by seabed area biomass
