@@ -416,12 +416,12 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
            
            
            # if SPECIES_CODE catch is not the target species then set the catch to zero 
-           catch_recap_data$CAUGHT_KG_TOTAL[!catch_recap_data$SPECIES_CODE%in%target_species]=0
+           catch_recap_release_data$CAUGHT_KG_TOTAL[!catch_recap_release_data$SPECIES_CODE%in%target_species]=0
            
            # remove duplicate sets where both TOP and TOA were caught (i.e. a zero catch record from a non-target species will only count if there was no target species caught)
            # this should be C2.ID as there may be hauls that dont have an observed CRUISE and SET ID
            
-           catch_recap_data <- catch_recap_data[!duplicated(catch_recap_data$ID),]
+           catch_recap_release_data <- catch_recap_release_data[!duplicated(catch_recap_release_data$ID),]
            
            catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
            catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE + CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
@@ -434,7 +434,7 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
   catch_recap_data<-catch_recap_data[,!names(catch_recap_data)%in%c("NA","CRUISE_ID","SET_ID","SPECIES_CODE")]
   # replace NA N_recapture values with zero
   catch_recap_data[is.na(catch_recap_data)]<- 0
-  catch_recap_output<-data.frame(matrix(0,nrow=nrow(Catch_data),ncol=length(rel_seasons)+1))
+  catch_recap_output<-data.frame(matrix(0,nrow=nrow(catch_recap_data),ncol=length(rel_seasons)+1))
   names(catch_recap_output)<-c(names(catch_recap_data)[1],rel_seasons)
   catch_recap_output[,names(catch_recap_output)%in%names(catch_recap_data)]<-catch_recap_data
   
