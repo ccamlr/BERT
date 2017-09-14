@@ -147,8 +147,10 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
       boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]],
                                       length(x$data[["ref_CPUE"]]),
                                       replace=TRUE), na.rm=TRUE)
-      boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
-                             sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      # boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
+      #                        sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      boot_ref_bio <- rnorm(1, mean=x$data[["ref_bio"]],
+                             sd=x$data[["ref_bio_cv"]]*x$data[["ref_bio"]])
       ## Calculate the biomass in the fished area
       boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
                               fish_area = x$data[["fish_area"]],
@@ -165,8 +167,8 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
       boot_ref_CPUE <- mean(sample(x$data[["ref_CPUE"]],
                                      length(x$data[["ref_CPUE"]]),
                                      replace=TRUE), na.rm=TRUE)
-      boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
-                             sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      boot_ref_bio <- rnorm(1, mean=x$data[["ref_bio"]],
+                             sd=x$data[["ref_bio_cv"]]*x$data[["ref_bio"]])
       ## Calculate the biomass in the fished area
       boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
                               fish_area = x$data[["fish_area"]],
