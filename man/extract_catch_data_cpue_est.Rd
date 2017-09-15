@@ -2,7 +2,40 @@
 % Please edit documentation in R/process_data.R
 \name{extract_catch_data_cpue_est}
 \alias{extract_catch_data_cpue_est}
-\title{Extract haul data}
+\title{#' Extract recaptures
+#'
+#' Extract recapture data for calculation of biomass
+#' @param data tag release and recapture data with fields SEASON_RELEASE,
+#' SEASON_RECAPTURE and Recapture_CCAMLR_Month
+#' @param rel_seasons vector of tag release seasons
+#' @param recap_seasons vector of tag recapture seasons
+#' @param ... additional arguments
+#' @export
+extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
+  ## define the number of months
+  n_months <- 12
+  ## define an array to store recaps by season and month of release and recapture
+  recaps <- array(0, dim=c(length(rel_seasons), n_months, n_months,
+                           length(recap_seasons)))
+  #* lucy added dimnames to the array 
+  dimnames(recaps) <- c("release_season","release_month","recapture_month","recapture_season")
+  ## loop to fill the array
+  for(i in 1:length(recap_seasons)){
+    for(j in 1:n_months){
+      for(k in 1:length(rel_seasons)){
+        for(l in 1:n_months){
+          recaps[k, l, j, i] <- nrow(data[data[["SEASON_RELEASE"]] == rel_seasons[k] &
+                                            data[["Release_CCAMLR_Month"]] == l &
+                                            data[["SEASON_RECAPTURE"]] == recap_seasons[i] &
+                                            data[["Recapture_CCAMLR_Month"]] == j,])
+        }
+      }
+    }
+  }
+  #* consider adding a class
+  ## return the array of recaptures
+  recaps
+}}
 \usage{
 extract_catch_data_cpue_est(data, catch_seasons, measure, mean_fish_weight,
   target_species)
@@ -20,5 +53,8 @@ SEASON_RECAPTURE and Recapture_CCAMLR_Month}
 \item{target_species}{is the species that is targetted in the research block or reference area}
 }
 \description{
+Extract haul data
+}
+\details{
 Extract catch data for cpue by seabed area biomass
 }

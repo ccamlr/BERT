@@ -5,7 +5,7 @@
 \title{CPUE Seabed area analogy}
 \usage{
 CPUE_seabed(fish_CPUE_data, fish_area, ref_CPUE_data, ref_area, ref_bio,
-  ref_bio_cv = 0, method = "median")
+  ref_bio_cv, method = "median")
 }
 \arguments{
 \item{fish_CPUE_data}{vector of CPUE data from the research area}
