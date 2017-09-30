@@ -426,13 +426,9 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
            
            # correction made so that duplicated hauls where the target species was caught but matched with a different release event
            # are not removed before being transposed and included in the Chapman bootstrap calculation (30-09-2017)
-           duplication_test<- catch_recap_release_data[duplicated(catch_recap_release_data$ID),]
+           catch_recap_release_data <- catch_recap_release_data[!(!catch_recap_release_data$SPECIES_CODE%in%target_species&duplicated(catch_recap_release_data$ID)),]
            
-           if(nrow(duplication_test)>0){
-             if(!duplication_test$SPECIES_CODE%in%target_species){
-               catch_recap_release_data <- catch_recap_release_data[!duplicated(catch_recap_release_data$ID),]
-             }
-           }
+           
            # remove columns that arent required for input into the Chapman estimate
            catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
            # transpose data so recaptures are aligned with each release year by column
