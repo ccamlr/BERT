@@ -276,13 +276,13 @@ extract_catch_data_cpue_est <- function(data,catch_seasons,measure,mean_fish_wei
                catch_release_data$CAUGHT_KG_TOTAL[is.na(catch_release_data$CAUGHT_KG_TOTAL)]=0
                
                catch_release_data$CAUGHT_KG_TOTAL=catch_release_data$CAUGHT_KG_TOTAL+catch_release_data$Total_kg_released
-               }else{catch_release_data <- Catch_data}
+             }else{catch_release_data <- Catch_data}
              
              catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
              
              # catch_release_data <-subset(catch_release_data,select=c(ID,CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
              
-            
+             
              # reshape to make each release season a column 
              # catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
            }else{
@@ -306,7 +306,7 @@ extract_catch_data_cpue_est <- function(data,catch_seasons,measure,mean_fish_wei
              catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
              
              # catch_release_data <-subset(catch_release_data,select=c(CAUGHT_KG_KM,CRUISE_ID,SET_ID,SPECIES_CODE))
-        
+             
              
              # reshape to make each release season a column 
              # catch_release_data<-subset(catch_release_data,select=CAUGHT_KG_KM)
@@ -418,17 +418,29 @@ extract_catch_data_tag_est <- function(data, rel_seasons,measure,mean_fish_weigh
            # if SPECIES_CODE catch is not the target species then set the catch to zero 
            catch_recap_release_data$CAUGHT_KG_TOTAL[!catch_recap_release_data$SPECIES_CODE%in%target_species]=0
            
+           # if SPECIES_CODE recapture is not the target species then set recapture to zero
+           catch_recap_release_data$N_recaptures[!catch_recap_release_data$SPECIES_CODE%in%target_species]=0
+           
            # remove duplicate sets where both TOP and TOA were caught (i.e. a zero catch record from a non-target species will only count if there was no target species caught)
            # this should be C2.ID as there may be hauls that dont have an observed CRUISE and SET ID
            
-           catch_recap_release_data <- catch_recap_release_data[!duplicated(catch_recap_release_data$ID),]
+           # correction made so that duplicated hauls where the target species was caught but matched with a different release event
+           # are not removed before being transposed and included in the Chapman bootstrap calculation (30-09-2017)
+           duplication_test<- catch_recap_release_data[duplicated(catch_recap_release_data$ID),]
            
+           if(nrow(duplication_test)>0){
+             if(!duplication_test$SPECIES_CODE%in%target_species){
+               catch_recap_release_data <- catch_recap_release_data[!duplicated(catch_recap_release_data$ID),]
+             }
+           }
+           # remove columns that arent required for input into the Chapman estimate
            catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_recaptures,CRUISE_ID,SET_ID,SPECIES_CODE))
+           # transpose data so recaptures are aligned with each release year by column
            catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE + CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_recaptures")
          }
   )
   
-
+  
   
   # reshape to make each release season a column 
   catch_recap_data<-catch_recap_data[,!names(catch_recap_data)%in%c("NA","CRUISE_ID","SET_ID","SPECIES_CODE")]
