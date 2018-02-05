@@ -77,47 +77,6 @@ CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
 }
 
 
-#' CPUE Seabed area analogy (old implementation)
-#'
-#' Calculate biomass using the CPUE seabed area analogy
-#' @param fish_CPUE_data vector of CPUE data from the research area
-#' @param fish_area habitat area (km2) in research area
-#' @param ref_CPUE_data vector of CPUE data from reference area
-#' @param ref_area habitat area (km2) in reference area
-#' @param ref_bio biomass estimate in reference area (I assume the units are in kg)
-#' @param ref_bio_cv CV of biomass estimate in reference area
-#' @export
-CPUE_seabed_old <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
-                             ref_area, ref_bio, ref_bio_cv=0){
-  ## check for missing CPUE values
-  if(any(is.na(fish_CPUE_data))) warning(paste0(length(fish_CPUE_data[which(is.na(fish_CPUE_data))]),
-                                           " NA values in the CPUE data that have been removed"))
-  if(any(is.na(ref_CPUE_data))) warning(paste0(length(ref_CPUE_data[which(is.na(ref_CPUE_data))]),
-                                           " NA values in the CPUE data that have been removed"))
-  ## calculate the median CPUEs
-  median_fish_CPUE <- median(fish_CPUE_data, na.rm=TRUE)
-  median_ref_CPUE <- median(ref_CPUE_data, na.rm=TRUE)
-  ## calculate the biomass
-  bio <- cpue_bio(fish_CPUE = median_fish_CPUE, fish_area = fish_area,
-                  ref_CPUE = median_ref_CPUE, ref_area = ref_area,
-                  ref_bio = ref_bio)
-  ## construct a list of the output
-  res <- list(data = list(fish_CPUE = fish_CPUE_data,
-                          ref_CPUE = ref_CPUE_data,
-                          fish_area = fish_area,
-                          ref_area = ref_area,
-                          ref_bio = ref_bio,
-                          ref_bio_cv = ref_bio_cv,
-                          median_ref_CPUE = median_ref_CPUE,
-                          median_fish_CPUE = median_fish_CPUE,
-                          method = method),
-              est = bio)
-  ## add an S3 class
-  class(res) <- "cpue_area"
-  ## return the object
-  res
-}
-
 #' Bootstrap CPUE by seabed area
 #'
 #' Bootstrap CPUE by seabed area
@@ -147,10 +106,10 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
       boot_ref_CPUE <- median(sample(x$data[["ref_CPUE"]],
                                       length(x$data[["ref_CPUE"]]),
                                       replace=TRUE), na.rm=TRUE)
-      boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
-                             sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
-      # boot_ref_bio <- rnorm(1, mean=x$data[["ref_bio"]],
-      #                        sd=x$data[["ref_bio_cv"]]*x$data[["ref_bio"]])
+      # boot_ref_bio <- rlnorm(1, meanlog=log(x$data[["ref_bio"]]),
+      #                        sdlog=sqrt(log((x$data[["ref_bio_cv"]]^2)+1)))
+      boot_ref_bio <- stats::rnorm(1, mean=x$data[["ref_bio"]],
+                             sd=x$data[["ref_bio_cv"]]*x$data[["ref_bio"]])
       ## Calculate the biomass in the fished area
       boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 
                               fish_area = x$data[["fish_area"]],
@@ -167,7 +126,7 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
       boot_ref_CPUE <- mean(sample(x$data[["ref_CPUE"]],
                                      length(x$data[["ref_CPUE"]]),
                                      replace=TRUE), na.rm=TRUE)
-      boot_ref_bio <- rnorm(1, mean=x$data[["ref_bio"]],
+      boot_ref_bio <- stats::rnorm(1, mean=x$data[["ref_bio"]],
                              sd=x$data[["ref_bio_cv"]]*x$data[["ref_bio"]])
       ## Calculate the biomass in the fished area
       boot_res[i] <- cpue_bio(fish_CPUE = boot_fish_CPUE, 

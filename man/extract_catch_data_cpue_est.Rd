@@ -2,59 +2,24 @@
 % Please edit documentation in R/process_data.R
 \name{extract_catch_data_cpue_est}
 \alias{extract_catch_data_cpue_est}
-\title{#' Extract recaptures
-#'
-#' Extract recapture data for calculation of biomass
-#' @param data tag release and recapture data with fields SEASON_RELEASE,
-#' SEASON_RECAPTURE and Recapture_CCAMLR_Month
-#' @param rel_seasons vector of tag release seasons
-#' @param recap_seasons vector of tag recapture seasons
-#' @param ... additional arguments
-#' @export
-extract_recaptures <- function(data, rel_seasons, recap_seasons, ...){
-  ## define the number of months
-  n_months <- 12
-  ## define an array to store recaps by season and month of release and recapture
-  recaps <- array(0, dim=c(length(rel_seasons), n_months, n_months,
-                           length(recap_seasons)))
-  #* lucy added dimnames to the array 
-  dimnames(recaps) <- c("release_season","release_month","recapture_month","recapture_season")
-  ## loop to fill the array
-  for(i in 1:length(recap_seasons)){
-    for(j in 1:n_months){
-      for(k in 1:length(rel_seasons)){
-        for(l in 1:n_months){
-          recaps[k, l, j, i] <- nrow(data[data[["SEASON_RELEASE"]] == rel_seasons[k] &
-                                            data[["Release_CCAMLR_Month"]] == l &
-                                            data[["SEASON_RECAPTURE"]] == recap_seasons[i] &
-                                            data[["Recapture_CCAMLR_Month"]] == j,])
-        }
-      }
-    }
-  }
-  #* consider adding a class
-  ## return the array of recaptures
-  recaps
-}}
+\title{Extract haul data}
 \usage{
-extract_catch_data_cpue_est(data, catch_seasons, measure, mean_fish_weight,
-  target_species)
+extract_catch_data_cpue_est(catch_data, release_data, catch_seasons = NULL,
+  measure, mean_fish_weight = NULL, target_species)
 }
 \arguments{
-\item{data}{catch and tag recapture data
-SEASON_RECAPTURE and Recapture_CCAMLR_Month}
+\item{catch_data}{catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, Fishing Season,cruise id, set id, species code, retained catch quantity (kg),long line length}
 
-\item{catch_seasons}{vector of seasons for which catch data exists}
+\item{release_data}{release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: Fishing Season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated}
 
-\item{measure}{"numbers" if fish numbers are required or "weights" if fish weights are required}
+\item{catch_seasons}{vector of seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe}
 
-\item{mean_fish_weight}{is the mean weight of a fish to estimate the fish release weights per haul from}
+\item{measure}{"counts" if only fish counts are available or "weights" if fish weights are required}
 
-\item{target_species}{is the species that is targetted in the research block or reference area}
+\item{mean_fish_weight}{is the mean weight of a fish to estimate the fish release weights per haul if measure= "counts" otherwise the default=NULL}
+
+\item{target_species}{is the species code for the species that is targetted in the research block or reference area}
 }
 \description{
-Extract haul data
-}
-\details{
 Extract catch data for cpue by seabed area biomass
 }
