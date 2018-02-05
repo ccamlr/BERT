@@ -4,18 +4,21 @@
 \alias{extract_catch_data_tag_est}
 \title{Extract haul data}
 \usage{
-extract_catch_data_tag_est(data, rel_seasons, measure, mean_fish_weight,
-  target_species)
+extract_catch_data_tag_est(catch_data, release_data, recapture_data,
+  season = NULL, measure, mean_fish_weight = NULL, target_species)
 }
 \arguments{
-\item{data}{catch and tag recapture data
-SEASON_RECAPTURE and Recapture_CCAMLR_Month}
+\item{catch_data}{catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, fishing season,cruise id, set id, species code, catch quantity}
 
-\item{rel_seasons}{vector of release seasons}
+\item{release_data}{release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: fishing season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated based on the mean_fish_weight provided}
 
-\item{measure}{"numbers" if fish numbers are required or "weights" if fish weights are required}
+\item{recapture_data}{recapture data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: fishing season of release, fishing season of recapture, cruise id, set id and species code}
 
-\item{mean_fish_weight}{is the mean weight of a fish to estimate the fish release weights per haul from}
+\item{season}{season for which you have catch and recapture data}
+
+\item{measure}{"counts" if fish counts are required or "weights" if fish weights are required}
+
+\item{mean_fish_weight}{is the mean weight of a fish (kg) to estimate the fish release weights per haul from}
 
 \item{target_species}{is the species that is targetted in the research block or reference area}
 }
