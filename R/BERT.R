@@ -14,6 +14,8 @@
 #' @section Vignettes:
 #' To learn more about BERT, start with the vignettes:
 #'
+#'
+#'
 #' @docType package
 #' @name BERT
 #' @importFrom grDevices dev.off png terrain.colors
@@ -24,4 +26,6 @@
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast
 NULL
-#> NULL
+
+## quiets concerns of R CMD check re: the .'s that appear in ddply
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
