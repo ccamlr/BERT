@@ -6,7 +6,7 @@
 \title{Research Block Seabed Area
  
  A dataset that contains fishable seabed area estimated from a 
-  processed version of the GEBCO 2014 data within Research Blocks}
+  processed version of the GEBCO 2014 data within Research Blocks that were assessed at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)}
 \format{A dataframe with 27 rows and 2 columns
 \describe{
 \item{RB}{CCAMLR Research Block codes from WG-FSA-17}
@@ -19,6 +19,6 @@ RB_seabed_area
 Research Block Seabed Area
  
  A dataset that contains fishable seabed area estimated from a 
-  processed version of the GEBCO 2014 data within Research Blocks
+  processed version of the GEBCO 2014 data within Research Blocks that were assessed at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
 }
 \keyword{datasets}
