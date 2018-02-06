@@ -4,15 +4,19 @@
 #' @param release_data a single column data frame with the CCAMLR fishing season of individual fish release events
 #' @param recapture_data a two column data frame with the CCAMLR fishing season of release in the first column with the matched CCAMLR fishing season of recapture in the second column for each individual tagged fish. 
 #' @param release_seasons vector of seasons of interest where the default = NULL uses release_data seasons included in release_data dataframe
+#' @param recapture_season a single season that should match the catch season if applying a tag based estimate using the CCAMLR method where the default = NULL
 #' @param within_season_recaps is TRUE to include within season recaptures or FALSE to exclude them with default=FALSE 
-#' @importFrom plyr ddply
+#' @importFrom plyr ddply join
 #' @export
 #' 
-extract_recaptures_season <- function(release_data, recapture_data,release_seasons=NULL,within_season_recaps=FALSE){
+extract_recaptures_season <- function(release_data, recapture_data,release_seasons=NULL,recapture_season=NULL, within_season_recaps=FALSE){
   # remove release and recapture data from unwanted releases seasons 
-  if(!is.null(rel_seasons)){
-    release_data <- release_data[release_data[,1]%in%rel_seasons,]
-    recapture_data <- recapture_data[recapture_data[,2]%in%rel_season,]
+  if(!is.null(release_seasons)){
+    release_data <- release_data%in%release_seasons
+    recapture_data <- recapture_data[recapture_data[,1]%in%release_seasons,]
+  }
+  if(!is.null(recapture_season)){
+    recapture_data <- recapture_data[recapture_data[,2]%in%recapture_season,]
   }
   
   # remove within seasons recaps
@@ -25,24 +29,24 @@ extract_recaptures_season <- function(release_data, recapture_data,release_seaso
   # for a release event in each season
   
   
-  if(is.null(rel_seasons)){
-    rel_seasons <- sort(unique(release_data))
+  if(is.null(release_seasons)){
+    release_seasons <- sort(unique(release_data))
   }else{
-    rel_seasons <- sort(rel_seasons)
+    release_seasons <- sort(release_seasons)
   }
   
-  tag_data <- matrix(0, length(rel_seasons),length(rel_seasons)+2)
+  tag_data <- matrix(0, length(release_seasons),length(release_seasons)+2)
   tag_data <- data.frame(tag_data)
-  names(tag_data)<-c("Year","Releases",rel_seasons)
-  tag_data$Year <- rel_seasons 
+  names(tag_data)<-c("Year","Releases",release_seasons)
+  tag_data$Year <- release_seasons 
   # need to check variable names from table
   Releases <- data.frame(table(release_data))
   
   tag_data$Releases[tag_data$Year%in%Releases[,1]]<- Releases[,2]
   
   ## loop to fill the array
-  for(k in 1:length(rel_seasons)){
-    recaps <- data.frame(table(recapture_data[recapture_data[,1]==rel_seasons[k],]))
+  for(k in 1:length(release_seasons)){
+    recaps <- data.frame(table(recapture_data[recapture_data[,1]==release_seasons[k],]))
     # if there were no recaptures for a particular release event 
     
     if(nrow(recaps)>0){
@@ -62,15 +66,15 @@ extract_recaptures_season <- function(release_data, recapture_data,release_seaso
 #' Extract catch data for cpue by seabed area biomass
 #' @param catch_data catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, Fishing Season,cruise id, set id, species code, retained catch quantity (kg),long line length 
 #' @param release_data release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: Fishing Season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated 
-#' @param catch_seasons vector of seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe
+#' @param catch_season is the CCAMLR fishing seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe
 #' @param measure "counts" if only fish counts are available or "weights" if fish weights are required
 #' @param mean_fish_weight is the mean weight of a fish to estimate the fish release weights per haul if measure= "counts" otherwise the default=NULL
 #' @param target_species is the species code for the species that is targetted in the research block or reference area
-#' @importFrom plyr ddply
+#' @importFrom plyr ddply join
 #' @importFrom reshape2 dcast 
 #' @export
 #' 
-extract_catch_data_cpue_est <- function(catch_data,release_data,catch_seasons=NULL,measure,mean_fish_weight=NULL,target_species){
+extract_catch_data_cpue_est <- function(catch_data,release_data,catch_season=NULL,measure,mean_fish_weight=NULL,target_species){
   
   # assign variable names to catch data dataframe
   names(catch_data) <- c("ID","SEASON","CRUISE_ID","SET_ID","SPECIES_CODE","CAUGHT_KG_TOTAL","LINE_LENGTH")
@@ -93,9 +97,9 @@ extract_catch_data_cpue_est <- function(catch_data,release_data,catch_seasons=NU
     stop("a mean fish weight has not been entered, but is required for fish count measurements")
   
   # remove seasons that are not required 
-  if(!is.null(catch_seasons)){
-    catch_data <- catch_data[catch_data$SEASON%in%catch_seasons,]
-    release_data <- release_data[release_data$SEASON%in%catch_seasons,]
+  if(!is.null(catch_season)){
+    catch_data <- catch_data[catch_data$SEASON%in%catch_season,]
+    release_data <- release_data[release_data$SEASON%in%catch_season,]
   }
   
   # aggregate release by by haul so their weight can be added to the total catch retained catch
@@ -138,15 +142,16 @@ extract_catch_data_cpue_est <- function(catch_data,release_data,catch_seasons=NU
 #' @param catch_data catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, fishing season,cruise id, set id, species code, catch quantity 
 #' @param release_data release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: fishing season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated based on the mean_fish_weight provided
 #' @param recapture_data recapture data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: fishing season of release, fishing season of recapture, cruise id, set id and species code 
-#' @param season season for which you have catch and recapture data
+#' @param release_seasons CCAMLR fishing seasons for which tagged fish releases should be included. Default=NULL 
+#' @param catch_season CCAMLR fishing season for  which catch and recaptures should be limited to. Default=NULL 
 #' @param measure "counts" if fish counts are required or "weights" if fish weights are required
-#' @param mean_fish_weight is the mean weight of a fish (kg) to estimate the fish release weights per haul from
+#' @param mean_fish_weight is the mean weight of a fish (kg) to estimate the fish release weights per haul
 #' @param target_species is the species that is targetted in the research block or reference area
-#' @importFrom plyr ddply
+#' @importFrom plyr ddply join
 #' @importFrom reshape2 dcast
 #' @export
 #' 
-extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,season=NULL,measure,mean_fish_weight=NULL,target_species){
+extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,release_seasons=NULL,catch_season=NULL,measure,mean_fish_weight=NULL,target_species){
   ## define an array to store recaps by season and month of release and recapture
   # subtract the first year of releases as we dont want to include within season recaptures 
   # sort release seasons
@@ -176,42 +181,38 @@ extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,s
   if (measure=="counts" & is.null(mean_fish_weight))
     stop("a mean fish weight has not been entered, but is required for fish count measurements")
   
-  # if season is null then check that input data is only a single season   
-  if(is.null(season)){
-    if(length(unique(catch_data$SEASON))|length(unique(release_data$SEASON))|length(unique(recapture_data$SEASON_RECAPTURE))>1){
-      stop("more than one fishing season of data has been entered") 
+  # remove release seasons that are not required if specified and if seasons are not specified then
+  # specify as unique seasons in release data 
+  if(!is.null(release_seasons)){
+    recapture_data <- recapture_data[recapture_data$SEASON_RELEASE%in%release_seasons,]
+  }else{
+      release_seasons <- unique(release_data$SEASON)
     }
-    if(unique(catch_data$SEASON)!=unique(release_data$SEASON)|unique(catch_data$SEASON)!=unique(recapture_data$SEASON_RECAPTURE)|unqiue(release_data$SEASON)!=unique(recapture_data$SEASON_RECAPTURE)){
-      stop("the season of retained catch, releases and tagged fish recaptures are not equal")  
-    }
+  
+  # remove catch and recapture seasons that are not required if specified and if seasons are not specified then
+  # specify as unique seasons in release data 
+  if(!is.null(catch_season)){
+    recapture_data <- recapture_data[recapture_data$SEASON_RECAPTURE%in%catch_season,]
+    catch_data <- catch_data[catch_data$SEASON%in%catch_season,]
+    release_data <- release_data[release_data$SEASON%in%catch_season]
   }
-  
-  
-  # remove seasons that are not required 
-  if(!is.null(season)){
-    if(length(season)>1){
-      stop("more than one fishing season of data has been entered") 
-    }else{
-      catch_data <- catch_data[catch_data$SEASON%in%season,]
-      release_data <- release_data[release_data$SEASON%in%season,]
-      recapture_data <- recapture_data[recapture_data$SEASON_RECAPTURE%in%season,]}
-  }
-  
   
   # remove within season recap
   recapture_data <- recapture_data[recapture_data$SEASON_RECAPTURE!=recapture_data$SEASON_RELEASE,]
   
   # count recaptures per haul # this might need to be aggregated by SEASON_RELEASE instead of SEASON_RECAPTURE 
   # because at the end I think the recaptures for each release cohort are what goes into the multi_release function
-  N_recaps_haul_by_haul<- plyr::ddply(recapture_data, .(recapture_data$CRUISE_ID,recapture_data$SET_ID,recapture_data$SPECIES_CODE,recapture_data$SEASON_RELEASE),nrow)
-  names(N_recaps_haul_by_haul)<- c("CRUISE_ID","SET_ID","SPECIES_CODE","SEASON_RELEASE","N_RECAPTURES")
-  catch_recap_data<-join(catch_data,N_recaps_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+  N_recaps_haul_by_haul<- plyr::ddply(recapture_data,.(recapture_data$CRUISE_ID,recapture_data$SET_ID,recapture_data$SPECIES_CODE,recapture_data$SEASON_RELEASE),function(x){nrow(x)})
+  names(N_recaps_haul_by_haul)<-c("CRUISE_ID","SET_ID","SPECIES_CODE","SEASON_RELEASE","N_RECAPTURES")
+  
+  catch_recap_data<- plyr::join(catch_data,N_recaps_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
   
   # sum estimated weight of all fish released per haul
-  Weight_releases_haul_by_haul<- ddply(release_data,.(release_data$CRUISE_ID,release_data$SET_ID,release_data$SPECIES_CODE,release_data$SEASON),
+  Weight_releases_haul_by_haul<- ddply(release_data, .(release_data$CRUISE_ID,release_data$SET_ID,release_data$SPECIES_CODE,release_data$SEASON),
                                        function(x){sum(x$MEASURE)})
   names(Weight_releases_haul_by_haul)<-c("CRUISE_ID","SET_ID","SPECIES_CODE","SEASON","RELEASE_TOTAL")
-  catch_recap_release_data<- join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
+  
+  catch_recap_release_data<- plyr::join(catch_recap_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
   # assume NA values Total_kg_released values are zero
   catch_recap_release_data$RELEASE_TOTAL[is.na(catch_recap_release_data$RELEASE_TOTAL)]<- 0
   
@@ -226,6 +227,11 @@ extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,s
     catch_recap_release_data$CAUGHT_KG_TOTAL <- catch_recap_release_data$CAUGHT_KG_TOTAL+catch_recap_release_data$RELEASE_TOTAL
   }
   
+  catch_recap_release_data$N_RECAPTURES[is.na(catch_recap_release_data$N_RECAPTURES)]<-0
+  
+  catch_recap_release_data$CAUGHT_KG_TOTAL[is.na(catch_recap_release_data$CAUGHT_KG_TOTAL)]<-0
+  
+  
   # if SPECIES_CODE catch is not the target species then set the catch to zero 
   catch_recap_release_data$CAUGHT_KG_TOTAL[!catch_recap_release_data$SPECIES_CODE%in%target_species]<-0
   
@@ -234,7 +240,7 @@ extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,s
   
   # identify duplicates 
   duplicate_hauls <- catch_recap_release_data[duplicated(catch_recap_release_data$ID)|duplicated(catch_recap_release_data$ID, fromLast = TRUE),]
-
+  
   # remove them from the orginal dataframe before selecting target species from duplicates 
   catch_recap_release_data <- catch_recap_release_data[!(duplicated(catch_recap_release_data$ID)|duplicated(catch_recap_release_data$ID, fromLast = TRUE)),]
   
@@ -244,9 +250,9 @@ extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,s
   # add target species duplicate hauls back into dataframe
   catch_recap_release_data <- rbind(catch_recap_release_data, duplicate_hauls_target)
   
- 
+  
   # remove columns that arent required for input into the Chapman estimate
-  catch_recap_data <-subset(catch_recap_release_data,select=c(CAUGHT_KG_TOTAL,SEASON_RELEASE,N_RECAPTURES,CRUISE_ID,SET_ID,SPECIES_CODE))
+  catch_recap_data <- catch_recap_release_data[,names(catch_recap_release_data)%in%c("CAUGHT_KG_TOTAL","SEASON_RELEASE","N_RECAPTURES","CRUISE_ID","SET_ID","SPECIES_CODE")]
   # transpose data so recaptures are aligned with each release year by column
   catch_recap_data <-dcast(catch_recap_data,CRUISE_ID + SET_ID + SPECIES_CODE + CAUGHT_KG_TOTAL ~ SEASON_RELEASE,value.var ="N_RECAPTURES")
   
@@ -255,8 +261,9 @@ extract_catch_data_tag_est <- function(catch_data, release_data,recapture_data,s
   catch_recap_data<-catch_recap_data[,!names(catch_recap_data)%in%c("NA","CRUISE_ID","SET_ID","SPECIES_CODE")]
   # replace NA N_recapture values with zero
   catch_recap_data[is.na(catch_recap_data)]<- 0
-  catch_recap_output<-data.frame(matrix(0,nrow=nrow(catch_recap_data),ncol=length(rel_seasons)+1))
-  names(catch_recap_output)<-c(names(catch_recap_data)[1],rel_seasons)
+  # not sure if this part is really necessary - check further
+  catch_recap_output<-data.frame(matrix(0,nrow=nrow(catch_recap_data),ncol=length(release_seasons)+1))
+  names(catch_recap_output)<-c(names(catch_recap_data)[1],release_seasons)
   catch_recap_output[,names(catch_recap_output)%in%names(catch_recap_data)]<-catch_recap_data
   
   catch_recap_output
