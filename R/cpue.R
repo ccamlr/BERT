@@ -155,9 +155,9 @@ bootstrap.cpue_area <- function(x, nboot = 1e4, ...){
 #' @export
 summary.cpuesamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
   ## define the quantiles
-  quants <- quantile(object$Boot_estimates, 
+  quants <- stats::quantile(object$Boot_estimates, 
                      probs=quantiles, na.rm=TRUE)
-  se <- sd(object$Boot_estimates, na.rm=TRUE)
+  se <- stats::sd(object$Boot_estimates, na.rm=TRUE)
   cv <- se / object$cpue_area_obj$est
   est <- object$cpue_area_obj$est
   names(se) <- "boot_SE"
