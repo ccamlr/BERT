@@ -5,7 +5,8 @@
 \title{Extract and reformat release and recapture data}
 \usage{
 extract_recaptures_season(release_data, recapture_data,
-  release_seasons = NULL, within_season_recaps = FALSE)
+  release_seasons = NULL, recapture_season = NULL,
+  within_season_recaps = FALSE)
 }
 \arguments{
 \item{release_data}{a single column data frame with the CCAMLR fishing season of individual fish release events}
@@ -13,6 +14,8 @@ extract_recaptures_season(release_data, recapture_data,
 \item{recapture_data}{a two column data frame with the CCAMLR fishing season of release in the first column with the matched CCAMLR fishing season of recapture in the second column for each individual tagged fish.}
 
 \item{release_seasons}{vector of seasons of interest where the default = NULL uses release_data seasons included in release_data dataframe}
+
+\item{recapture_season}{a single season that should match the catch season if applying a tag based estimate using the CCAMLR method where the default = NULL}
 
 \item{within_season_recaps}{is TRUE to include within season recaptures or FALSE to exclude them with default=FALSE}
 }

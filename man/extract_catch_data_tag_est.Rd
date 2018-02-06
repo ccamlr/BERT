@@ -5,7 +5,8 @@
 \title{Extract haul data}
 \usage{
 extract_catch_data_tag_est(catch_data, release_data, recapture_data,
-  season = NULL, measure, mean_fish_weight = NULL, target_species)
+  release_seasons = NULL, catch_season = NULL, measure,
+  mean_fish_weight = NULL, target_species)
 }
 \arguments{
 \item{catch_data}{catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, fishing season,cruise id, set id, species code, catch quantity}
@@ -14,11 +15,13 @@ extract_catch_data_tag_est(catch_data, release_data, recapture_data,
 
 \item{recapture_data}{recapture data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: fishing season of release, fishing season of recapture, cruise id, set id and species code}
 
-\item{season}{season for which you have catch and recapture data}
+\item{release_seasons}{CCAMLR fishing seasons for which tagged fish releases should be included. Default=NULL}
+
+\item{catch_season}{CCAMLR fishing season for  which catch and recaptures should be limited to. Default=NULL}
 
 \item{measure}{"counts" if fish counts are required or "weights" if fish weights are required}
 
-\item{mean_fish_weight}{is the mean weight of a fish (kg) to estimate the fish release weights per haul from}
+\item{mean_fish_weight}{is the mean weight of a fish (kg) to estimate the fish release weights per haul}
 
 \item{target_species}{is the species that is targetted in the research block or reference area}
 }

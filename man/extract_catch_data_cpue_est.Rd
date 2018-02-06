@@ -4,7 +4,7 @@
 \alias{extract_catch_data_cpue_est}
 \title{Extract haul data}
 \usage{
-extract_catch_data_cpue_est(catch_data, release_data, catch_seasons = NULL,
+extract_catch_data_cpue_est(catch_data, release_data, catch_season = NULL,
   measure, mean_fish_weight = NULL, target_species)
 }
 \arguments{
@@ -12,7 +12,7 @@ extract_catch_data_cpue_est(catch_data, release_data, catch_seasons = NULL,
 
 \item{release_data}{release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: Fishing Season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated}
 
-\item{catch_seasons}{vector of seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe}
+\item{catch_season}{is the CCAMLR fishing seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe}
 
 \item{measure}{"counts" if only fish counts are available or "weights" if fish weights are required}
 
