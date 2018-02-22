@@ -63,5 +63,5 @@ est_fish_weight <- function(length_weight_data,length_data){
       
     }
   }
-  length_data
+  length_data$EST_WEIGHT_KG
 }
