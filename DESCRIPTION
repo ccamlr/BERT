@@ -9,7 +9,8 @@ Depends:
 Imports:
     raster,plyr,reshape2
 Suggests:
-    knitr,testthat
+    knitr,testthat,
+    rmarkdown
 VignetteBuilder: knitr
 Description: Implemention of models for the estimation of biomass in CCAMLR fisheries.
 License: GPL-3
