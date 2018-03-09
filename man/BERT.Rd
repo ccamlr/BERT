@@ -10,7 +10,7 @@ The BERT package provides methods for calculating precautionary estimates
 of biomass using CPUE and tag-based methods to prevent stock depletion while
 progressing towards an assessment.
 }
-\section{Multiple release, single recapture tag-return models}{
+\section{Multiple release, single release tag-return models}{
 
 Implementation of Chapman estimators (Seber 1982)
 along with bootstrapped confidence intervals
@@ -18,7 +18,8 @@ along with bootstrapped confidence intervals
 
 \section{CPUE seabed area}{
 
-Add this section
+Implementation of the CPUE by seabed area analogy method (Agnew et al, 2009)
+with boostrapped confidence intervals
 }
 
 \section{Vignettes}{

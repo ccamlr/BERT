@@ -5,7 +5,7 @@
 \alias{Ref_area_sebed_area}
 \title{Reference Area Seabed Area
  
- A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 datas
+ A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 data
   within Reference Areas that were used in used in estimating local biomass at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)}
 \format{A dataframe with 6 rows and 2 columns
 \describe{
@@ -18,7 +18,7 @@ Ref_area_sebed_area
 \description{
 Reference Area Seabed Area
  
- A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 datas
+ A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 data
   within Reference Areas that were used in used in estimating local biomass at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
 }
 \keyword{datasets}
