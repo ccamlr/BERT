@@ -4,12 +4,13 @@
 #' of biomass using CPUE and tag-based methods to prevent stock depletion while
 #' progressing towards an assessment.
 #'
-#' @section Multiple release, single recapture tag-return models:
+#' @section Multiple release, single release tag-return models:
 #' Implementation of Chapman estimators (Seber 1982)
 #' along with bootstrapped confidence intervals
 #'
 #' @section CPUE seabed area:
-#' Add this section
+#' Implementation of the CPUE by seabed area analogy method (Agnew et al, 2009)
+#' with boostrapped confidence intervals
 #'
 #' @section Vignettes:
 #' To learn more about BERT, start with the vignettes:
@@ -21,7 +22,7 @@
 #' @importFrom grDevices dev.off png terrain.colors
 #' @importFrom graphics par
 #' @importFrom raster crop extent freq mask raster xres yres plot
-#' @importFrom stats median rlnorm
+#' @importFrom stats median rlnorm quantile rbinom sd
 #' @importFrom utils download.file read.csv
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast
