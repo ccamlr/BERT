@@ -25,7 +25,7 @@ The main purpose of this package is to provide functions that:
 (1)  document the most up-to-date CPUE-by-seabed area and Chapman mark-recapture biomass estimation methods agreed by WG-FSA and WG-SAM and;   
 (2)  format the necessary CCAMLR data for input into the biomass estimation method functions  
 
-Methods used to estimate local toothfish biomass in the data-poor CCAMLR fisheries include a CPUE-by-seabed-area analogy method (Agnew et al, 2009) and a Chapman tag-recapture estimator (Hillary et al, 2009). Both methods have undergone modification in the working group meetings over the past 10 years with changes to formulas, fixed parameter values, appropriate time series of catch and tagging data for inclusion and the data quality and cleaning processes applied. To address this issue WG-SAM-16 agreed (and documented) a standardised default method of applying the CPUE-by-seabed area and the Chapman tag release-recapture methods of estimating biomass, and requested that the Secretariat apply these methods to provide a single set of biomass estimates of D. mawsoni or D.eleginoides in Research Blocks in Subareas 58.4 and 48.6 that could be further evaluated by WG-FSA (SC-CAMLR-XXXV, Annex 5, paragraph 2.28). 
+Methods used to estimate local toothfish biomass in the data-poor CCAMLR fisheries include a CPUE-by-seabed-area analogy method (Agnew et al, 2009) and a Chapman tag-recapture estimator (Hillary et al, 2009). Both methods have undergone modification in the working group meetings over the past 10 years with changes to formulas, fixed parameter values, appropriate time series of catch and tagging data for inclusion and the data quality and cleaning processes applied. To address this issue WG-SAM-16 agreed (and documented) a standardised default method of applying the CPUE-by-seabed area and the Chapman tag release-recapture methods of estimating biomass, and requested that the Secretariat apply these methods to provide a single set of biomass estimates of D. mawsoni or D.eleginoides in Research Blocks  in Subareas 58.4 and 48.6 that could be further evaluated by WG-FSA (SC-CAMLR-XXXV, Annex 5, paragraph 2.28). 
 
 In this vignette provides examples of both methods that are similar in lay-out to the R-markdown developed by the Secretariat for WG-FSA-17 except instead of using "real data" we provide simulated datasets for Research block 486_3 that targets Antartic toothfish (species_code = TOA) and Research block 5843_a1 that targets Patagonian toothfish (species code= TOP). Given data are simulated there are no data extract and processing steps included here, but see paper WG-FSA-17/42 or the R markdown document referred to above for details on these steps.
 
@@ -429,9 +429,9 @@ Fishable seabed area values for Reference Areas are also stored in the BERT R pa
 ```{r}
 # change Reference area seabed area RSR_open
 if(Ref_area=="RSR"){
-  RefArea_Seabed_area <-Ref_area_sebed_area$Seabed_area[Ref_area_sebed_area$RefArea%in%"RSR_open"]
+  RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%"RSR_open"]
 }else{
-  RefArea_Seabed_area <-Ref_area_sebed_area$Seabed_area[Ref_area_sebed_area$RefArea%in%Ref_area]
+  RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%Ref_area]
 }
 ```
 
@@ -566,9 +566,9 @@ for (y in Survey_est){
   
   # change Reference area seabed area RSR_open
   if(Ref_area=="RSR"){
-    RefArea_Seabed_area <-Ref_area_sebed_area$Seabed_area[Ref_area_sebed_area$RefArea%in%"RSR_open"]
+    RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%"RSR_open"]
   }else{
-    RefArea_Seabed_area <-Ref_area_sebed_area$Seabed_area[Ref_area_sebed_area$RefArea%in%Ref_area]
+    RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%Ref_area]
   }
   
   obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
