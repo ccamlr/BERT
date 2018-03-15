@@ -173,7 +173,7 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
 
 #' @export
 #' @rdname bootstrap
-bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE, ...){
+bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")
@@ -224,10 +224,19 @@ bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE, ...){
     if(adj_tags <1){
       boot_est[j,] <- c(NA, NA, NA)
     }else{
-      ## resample the haul data 
-      j_sample <- sample(nrow(hauls), replace=TRUE)
-      j_recaps <- sum(hauls[j_sample,]$recaps)/ reporting[n_years]
+      ## resample the hauls specifing whether to include replicates with zero recaps 
+      if(boot_zeroes){
+        ## include zero recapture haul samples
+        j_sample <- sample(nrow(hauls), replace=TRUE)
+      }else if(!boot_zeroes){
+        ## resample if replicate hauls have zero recaptures
+        repeat{
+        j_sample <- sample(nrow(hauls), replace=TRUE)
+        if(sum(hauls[j_sample,]$recaps)>=1) break
+        }
+      }
       j_catch  <- sum(hauls[j_sample,]$catch)
+      j_recaps <- sum(hauls[j_sample,]$recaps)/ reporting[n_years]
       ## calculate Chapman estimate
       if(x$Method=="Petersen"){
         ## Petersen numbers
