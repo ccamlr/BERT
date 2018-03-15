@@ -13,7 +13,7 @@ check_cpue_bio <- function(fish_CPUE, fish_area, ref_bio, ref_CPUE,ref_area){
 }
 
 
-## check function inputs from tagr
+## check mark-recapture biomass estimates
 ## investigate further 
 ## http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 
