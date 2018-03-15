@@ -3,9 +3,9 @@
 #' Estimate confidence intervals using a non-parametric bootstrap.
 #' @param x an object of of the appropriate class
 #' @param nboot number of bootstrap samples
-#' @param ... additional parameters
+#' @param boot_zeroes specifing whether to include bootstrap samples with zero recaptures
 #' @export
-bootstrap <- function(x, nboot, ...)
+bootstrap <- function(x, nboot, boot_zeroes)
   UseMethod("bootstrap")
 
 #' Test for integer zero
