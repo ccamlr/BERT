@@ -7,10 +7,15 @@ Authors@R: c(person("Paul","Burch", email = "Paul.Burch@aad.gov.au",role = c("au
 Depends:
     R (>= 3.0.2)
 Imports:
-    raster,plyr,reshape2
+    raster,
+    plyr,
+    reshape2,
+    ggplot2
 Suggests:
-    knitr,testthat,
-    rmarkdown
+    knitr,
+    testthat,
+    rmarkdown,
+    pander
 VignetteBuilder: knitr
 Description: Implemention of models for the estimation of biomass in CCAMLR fisheries.
 License: GPL-3
