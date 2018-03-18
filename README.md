@@ -22,5 +22,5 @@ Install via devtools:
 
 ```R
 library(devtools)
-install_github("ccamlr/BERT", build_vignettes = FALSE)
+install_github("ccamlr/BERT", build_vignettes = FALSE,auth_token="7ef7614738c2b3463fc791d4f22a719d61be35fa")
 ```

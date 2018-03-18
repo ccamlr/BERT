@@ -76,14 +76,13 @@ CPUE_seabed <- function(fish_CPUE_data, fish_area, ref_CPUE_data,
   res
 }
 
+## ************************************************ ##
+## S3 Generics
 
-#' Bootstrap CPUE by seabed area
-#'
-#' Bootstrap CPUE by seabed area
-#' @param x object of class cpue_area
-#' @param nboot number of bootstrap samples (default=10000)
+
 #' @export
-bootstrap.cpue_area <- function(x, nboot = 1e4){
+#' @rdname cpue_bootstrap
+cpue_bootstrap.cpue_area <- function(x, nboot){
   ## check the there are sufficient rows in the data
   if(length(x$data[["fish_CPUE"]]) <= 1) stop("there must be more than one CPUE record in the
                                           research area to undertake bootstrap")
