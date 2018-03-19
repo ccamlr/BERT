@@ -1,3 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-
++^\.github
+vignettes/rd_cache
+vignettes/docs_cache
+vignettes/rd_files
+vignettes/index_files
