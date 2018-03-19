@@ -13,7 +13,7 @@
 #' with boostrapped confidence intervals
 #'
 #' @section Vignettes:
-#' To learn more about BERT, start with the vignettes:
+#' To learn more about BERT, start with the vignette: 
 #'
 #'
 #'

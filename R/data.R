@@ -18,4 +18,4 @@
 #' \item{RefArea}{CCAMLR Reference area codes noting that RSR_open and HIMI are the only Reference areas currently used}
 #' \item{Seabed_area}{Planimetric seabed area within the 600-1800 m fishable depth range}
 #' }
-"Ref_area_sebed_area"
+"Ref_area_seabed_area"
