@@ -1,14 +1,13 @@
 ## CHANGES 
 
-documentation of bathy_data has been added but needs to be revised 
+load_bathy_data function has been removed and bathymetry data is not longer stored in the BERT package
 
+seabed areas for Research Blocks and Reference Areas included in biomass estimates presented at WG-FSA-17 are stored as data that can be called in the package using through Ref_area_sebed_area
 
 ## ISSUES
 
-load_bathy_data function has been removed and bathymetry data is stored in data folder of the package
 
-bootstrap function for cpue by seabed area method is currently not working
 
-## BERT VERSION 0.1.0
+## BERT VERSION 0.2.0.9000
 
 Package for implementing models for the estimation of biomass in CCAMLR exploratory fisheries
