@@ -1075,15 +1075,13 @@ store_B_est_all <- rbind(store_biomass_estimates_chapman,data.frame(store_biomas
 
 Point biomass estimates from both methods with upper and lower confidence intervals are shown in the table below
 
-### install and load ggplot2 and pander package.
+### install and load ggplot2 package.
 
-The pander package formats tables nicely
 
 The ggplot2 package provides nice plots with confidence intervals
 
 ```{r}
-# install.packages(c("pander","ggplot2"))
-library(pander)
+# install.packages("ggplot2")
 library(ggplot2)
 
 ```
@@ -1093,14 +1091,10 @@ library(ggplot2)
 store_B_est_most_recent <- store_B_est_all
 
 # remove hauls and catch limit 
-store_B_est_most_recent<- subset(store_B_est_most_recent, select=-RB_N_Hauls)
+store_B_est_most_recent<- subset(store_B_est_most_recent, select=-c(RB_N_Hauls,Season))
 store_B_est_most_recent  <- store_B_est_most_recent[order(store_B_est_most_recent$RB),]
-store_B_est_most_recent$Catch_lim <- store_B_est_most_recent$Est*0.04
 row.names(store_B_est_most_recent)<- NULL
-pander::panderOptions("table.alignment.default","left")
-pander::panderOptions('table.split.table', Inf)
-pander::panderOptions("graph.fontsize",10)
-pander::pander(store_B_est_most_recent)
+store_B_est_most_recent
 ```
 
 
@@ -1116,13 +1110,13 @@ Plot_data=store_B_est_most_recent
 Plot_data=Plot_data[Plot_data$RB%in%unique(Plot_data$RB[Plot_data$Method%in%"Chapman"]),]
 limits=ggplot2::aes(ymin=CI_lower,ymax =CI_upper)
 dodge = ggplot2::position_dodge(width=0.5)
-p=ggplot2::ggplot(Plot_data,aes(x=as.factor(Season),y=Est,color=Method,group=Method,label=N_recaptures)) +
+p=ggplot2::ggplot(Plot_data,aes(x=as.factor(Method),y=Est,color=Method,group=Method,label=N_recaptures)) +
   geom_point(position = position_dodge(width=0.5)) + 
   geom_text(aes(label=ifelse(is.na(N_recaptures),"",N_recaptures)),
             hjust=-0.5,vjust=-1,color="black",
             size=2) +geom_errorbar(aes(ymin=CI_lower,ymax =CI_upper), 
                                    position=position_dodge(width=0.5), width=0.25,color="black")+
-  facet_wrap(~RB,scales="free_y")+ylab("Estimated Biomass(t)") + xlab("Season") +
+  facet_wrap(~RB,scales="free_y")+ylab("Estimated Biomass(t)") + xlab("Method") +
   scale_x_discrete(expand = c(0.1,0.1)) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),legend.position = "none")
 print(p)

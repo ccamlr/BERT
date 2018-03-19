@@ -7,11 +7,11 @@
 multi_release(tags, hauls, pars)
 }
 \arguments{
-\item{tags}{matrix (or dataframe?) where the first column specifies the annual releases and
+\item{tags}{matrix (or dataframe) where the first column specifies the annual releases and
 subsequent columns the annual recaptures by release cohort (rows). Note 
 these must be whole numbers}
 
-\item{hauls}{matrix (or dataframe?) where the first column represents the
+\item{hauls}{matrix (or dataframe) where the first column represents the
 untagged recaptures and subsequent columns the recaptures by release cohort 
 with the first (oldest) cohort to the left and the last (youngest) to the
 right}
