@@ -55,10 +55,10 @@ NULL
 #' 
 #' 5) The remaining natural mortality and chronic tag loss and tag-induced
 #'  mortality is applied.
-#' @param tags matrix (or dataframe?) where the first column specifies the annual releases and
+#' @param tags matrix (or dataframe) where the first column specifies the annual releases and
 #' subsequent columns the annual recaptures by release cohort (rows). Note 
 #' these must be whole numbers
-#' @param hauls matrix (or dataframe?) where the first column represents the
+#' @param hauls matrix (or dataframe) where the first column represents the
 #' untagged recaptures and subsequent columns the recaptures by release cohort 
 #' with the first (oldest) cohort to the left and the last (youngest) to the
 #' right
