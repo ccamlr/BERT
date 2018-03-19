@@ -212,8 +212,8 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
 }
 
 #' @export
-#' @rdname bootstrap
-bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE){
+#' @rdname tag_bootstrap
+tag_bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")

@@ -172,8 +172,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
 ## S3 Generics
 
 #' @export
-#' @rdname bootstrap
-bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE){
+#' @rdname tag_bootstrap
+tag_bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")
