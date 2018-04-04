@@ -27,7 +27,7 @@ The main purpose of this package is to provide functions that:
 
 Methods used to estimate local toothfish biomass in the data-poor CCAMLR fisheries include a CPUE-by-seabed-area analogy method (Agnew et al, 2009) and a Chapman tag-recapture estimator (Hillary et al, 2009). Both methods have undergone modification in the working group meetings over the past 10 years with changes to formulas, fixed parameter values, appropriate time series of catch and tagging data for inclusion and the data quality and cleaning processes applied. To address this issue WG-SAM-16 agreed (and documented) a standardised default method of applying the CPUE-by-seabed area and the Chapman tag release-recapture methods of estimating biomass, and requested that the Secretariat apply these methods to provide a single set of biomass estimates of D. mawsoni or D.eleginoides in Research Blocks  in Subareas 58.4 and 48.6 that could be further evaluated by WG-FSA (SC-CAMLR-XXXV, Annex 5, paragraph 2.28). 
 
-In this vignette provides examples of both methods that are similar in lay-out to the R-markdown developed by the Secretariat for WG-FSA-17 except instead of using "real data" we provide simulated datasets for Research block 486_3 that targets Antartic toothfish (species_code = TOA) and Research block 5843_a1 that targets Patagonian toothfish (species code= TOP). Given data are simulated there are no data extract and processing steps included here, but see paper WG-FSA-17/42 or the R markdown document referred to above for details on these steps.
+In this vignette provides examples of both methods that are similar in lay-out to the R-markdown developed by the Secretariat for WG-FSA-17 except instead of using "real data" we provide simulated datasets for a Research block that targets Antartic toothfish (i.e. RB_TOA) and Research block that targets Patagonian toothfish (i.e. RB_TOP). Given data are simulated there are no data extract and processing steps included here, but see paper WG-FSA-17/42 or the R markdown document referred to above for details on these steps.
 
 To work through the examples in the vignette you will need to install the BERT R package from github. In order to install from github you will firstly need to install devtools (i.e. install.packages("devtools")) and then use the following command:
 
@@ -58,7 +58,7 @@ For the CPUE-by-seabed area local biomass estimates catch, length-weight and tag
 
 Catch data requires the following data fields: ID, Season, CRUISE_ID, SET_ID, SPECIES_CODE, CAUGHT_KG_TOTAL, LINE_LENGTH, RESEARCH_BLOCK_CODE
 
-Simulated catch data for TOA in Research Block 486_3 and TOP in Research Block 5843a_1 included 200 sets per Research Block for the CCAMLR 2017 fishing season. Line lengths were simulated based on a mean of 10 km (or 1000m) and total catch per set was simulated based on means from historical catch from those Research Blocks in the past 3 fishing seasons. 
+Simulated catch data for TOA in Research Block RB_TOA and TOP in Research Block RB_TOP included 200 sets per Research Block for the CCAMLR 2017 fishing season. Line lengths were simulated based on a mean of 10 km (or 1000m) and total catch per set was simulated based on means from historical catch from those Research Blocks in the past 3 fishing seasons. 
 
 ```{r}
 # create four simulated datasets similar to what would be provided in data extracts for Research Blocks 
@@ -69,14 +69,14 @@ catch_data_sim_RB <- rbind(data.frame(ID=seq(1,200,1),Season=rep(2017,200),
                                       SPECIES_CODE=rep("TOA",200),
                                       CAUGHT_KG_TOTAL=rnorm(200,mean=1257.80,sd=300),
                                       LINE_LENGTH=rnorm(200,mean=10000,sd=2000),
-                                      RESEARCH_BLOCK_CODE=rep("486_3",200)),
+                                      RESEARCH_BLOCK_CODE=rep("RB_TOA",200)),
                            data.frame(ID=seq(201,400,1),
                                       Season=rep(2017,200),
                                       CRUISE_ID=rep(200,200),SET_ID=seq(1,200,1),
                                       SPECIES_CODE=rep("TOP",200),
                                       CAUGHT_KG_TOTAL=rnorm(200,mean=274.93,sd=50),
                                       LINE_LENGTH=rnorm(200,mean=10000,sd=2000),
-                                      RESEARCH_BLOCK_CODE=rep("5843a_1",200)))
+                                      RESEARCH_BLOCK_CODE=rep("RB_TOP",200)))
 
 
 
@@ -84,7 +84,7 @@ catch_data_sim_RB <- rbind(data.frame(ID=seq(1,200,1),Season=rep(2017,200),
 
 Release data requires the following data fields: SEASON (of release), CRUISE_ID, SET_ID, SPECIES_CODE,RESEARCH_BLOCK_CODE (of release), ASD_CODE, LENGTH_CM (of the released fish)
 
-Simulated tagged fish release data for TOA in Research Block 486_3 and TOP in Research Block 5843a_1 included 50 released individuals from each CCAMLR 2016 fishing season from 2015 to 2017. Fish lengths were simulated based on mean fish lengths from the tagged fish released in the relevant Research Blocks.
+Simulated tagged fish release data for TOA in Research Block RB_TOA and TOP in Research Block RB_TOP included 50 released individuals from each CCAMLR 2016 fishing season from 2015 to 2017. Fish lengths were simulated based on mean fish lengths from the tagged fish released in the relevant Research Blocks.
 
 ```{r}
 # release data 
@@ -92,21 +92,21 @@ release_data_sim_RB <- rbind(data.frame(SEASON=c(rep(2015,50),rep(2016,50),rep(2
                                         CRUISE_ID=c(rep(40,50),rep(90,50),rep(100,50)),
                                         SET_ID=sample(seq(1,200,1),150,replace=FALSE),
                                         SPECIES_CODE=rep("TOA",150),
-                                        RESEARCH_BLOCK_CODE=rep("486_3",150),
-                                        ASD_CODE=rep("486",150),
+                                        RESEARCH_BLOCK_CODE=rep("RB_TOA",150),
+                                        ASD_CODE=rep("TOA_ASD",150),
                                         LENGTH_CM=rnorm(150,150,10)),
                              data.frame(SEASON=c(rep(2015,50),rep(2016,50),rep(2017,50)),
                                         CRUISE_ID=c(rep(45,50),rep(95,50),rep(200,50)),
                                         SET_ID=sample(seq(1,200,1),150,replace=FALSE),
                                         SPECIES_CODE=rep("TOP",150),
-                                        RESEARCH_BLOCK_CODE=rep("5843a_1",150),
-                                        ASD_CODE=rep("5843a",150),
+                                        RESEARCH_BLOCK_CODE=rep("RB_TOP",150),
+                                        ASD_CODE=rep("TOP_ASD",150),
                                         LENGTH_CM=rnorm(150,80,10)))
 ```
 
 Recapture data requires the following data fields: SEASON_RELEASE, SEASON_RECAPTURE, CRUISE_ID_RECAPTURE, SET_ID_RECAPTURE, SPECIES_CODE_RECAPTURE,RESEARCH_BLOCK_CODE_RECAPTURE, RESEARCH_BLOCK_CODE_RELEASE
 
-Simulated tagged fish recapture data for TOA in Research Block 486_3 included 8 tagged fish recaptures and 4 recaptured individuals from Research Block 5843a_1 from the CCAMLR 2017 fishing season. Note that no within season recaptures were simulated. 
+Simulated tagged fish recapture data for TOA in Research Block RB_TOA included 8 tagged fish recaptures and 4 recaptured individuals from Research Block RB_TOP from the CCAMLR 2017 fishing season. Note that no within season recaptures were simulated. 
 
 ```{r}
 # recapture data 
@@ -115,30 +115,30 @@ recapture_data_sim_RB <- rbind(data.frame(SEASON_RELEASE=c(rep(2015,2),rep(2016,
                                           CRUISE_ID_RECAPTURE=rep(100,8),
                                           SET_ID_RECAPTURE=sample(seq(1,200,1),8),
                                           SPECIES_CODE_RECAPTURE=rep("TOA",8),
-                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("486_3",8),
-                                          RESEARCH_BLOCK_CODE_RELEASE=rep("486_3",8)),
+                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("RB_TOA",8),
+                                          RESEARCH_BLOCK_CODE_RELEASE=rep("RB_TOA",8)),
                                data.frame(SEASON_RELEASE=c(rep(2015,2),rep(2016,2)),
                                           SEASON_RECAPTURE=rep(2017,4),
                                           CRUISE_ID_RECAPTURE=rep(200,4),
                                           SET_ID_RECAPTURE=sample(seq(1,200,1),4),
                                           SPECIES_CODE_RECAPTURE=rep("TOP",4),
-                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("5843a_1",4),
-                                          RESEARCH_BLOCK_CODE_RELEASE=rep("5843a_1",4)))
+                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("RB_TOP",4),
+                                          RESEARCH_BLOCK_CODE_RELEASE=rep("RB_TOP",4)))
 ```
 
 Length-weight data requires the following data fields: ASD_CODE,SPECIES_CODE, LENGTH_CM and WEIGHT_KG
 
-Simulated length and weight data TOA in Research Block 486_3 and TOP in Research Block 5843a_1 included 200 individuals per Research Block. Fish lengths were simulated based on mean fish lengths from observer data that had been collected in those Research Blocks. Weights were simulated using approximate parameter values obtained from modelled log-linear relationships between length and weight data collected from these two areas. 
+Simulated length and weight data TOA in Research Block RB_TOA and TOP in Research Block RB_TOP included 200 individuals per Research Block. Fish lengths were simulated based on mean fish lengths from observer data that had been collected in those Research Blocks. Weights were simulated using approximate parameter values obtained from modelled log-linear relationships between length and weight data collected from these two areas. 
 
 
 
 ```{r}
 # length_weight data 
-length_weight_data_sim_RB <- rbind(data.frame(ASD_CODE=rep("486",200),
+length_weight_data_sim_RB <- rbind(data.frame(ASD_CODE=rep("TOA_ASD",200),
                                               SPECIES_CODE=rep("TOA",200),
                                               LENGTH_CM=rnorm(200,150,50),
                                               WEIGHT_KG=rnorm(200,40,10)),
-                                   data.frame(ASD_CODE=rep("5843a",200),
+                                   data.frame(ASD_CODE=rep("TOP_ASD",200),
                                               SPECIES_CODE=rep("TOP",200),
                                               LENGTH_CM=rnorm(200,80,10),
                                               WEIGHT_KG=rnorm(200,10,4)))
@@ -264,16 +264,16 @@ The areas of the research block and the reference area ($A_x$,$A_r$) were assume
 
 The uncertainty is then quantified by taking quantiles of the $B^i_x$, for example, 95% confidence intervals are the 0.025 and 0.975 quantiles.
 
-## CPUE-by-seabed area biomass estimation of Antarctic toothfish (TOA) in Research Block 486_3 
+## CPUE-by-seabed area biomass estimation of Antarctic toothfish (TOA) in Research Block RB_TOA 
 
-In this example toothfish biomass is estimated using the CPUE-by-seabed area method in 486_3 based on simulated data and the estimated released fish weights described above. 
+In this example toothfish biomass is estimated using the CPUE-by-seabed area method in RB_TOA based on simulated data and the estimated released fish weights described above. 
 
-Data from Research block 486_3 are selected 
+Data from Research block RB_TOA are selected 
 
 ```{r,warning=FALSE,echo=TRUE,message=FALSE}
 
 # use RB as an index 
-RB <- "486_3"
+RB <- "RB_TOA"
 
 # restrict Release data to relevant research block 
 Release_data_RB <- release_data_sim_RB[release_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in%RB,]
@@ -287,14 +287,14 @@ Research Blocks where TOP is targetted is specified and the inverse of this infe
 
 ```{r}
 # note only 3 Research Blocks currently target TOP and all others target TOA
-TOP_target_RBs <- c("5843a_1","5844b_1","5844b_2")
+TOP_target_RBs <- c("RB_TOP","5844b_1","5844b_2")
 ## make sure you specifiy target species data 
 target_species <- ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 
 ```
 
 
-Tagged fish release and catch data in Research Block 486_3 is subset to include only columns of data that are relevant to the CPUE-by-seabed area estimates 
+Tagged fish release and catch data in Research Block RB_TOA is subset to include only columns of data that are relevant to the CPUE-by-seabed area estimates 
 ```{r}
 
 # select data for input into biomass estimate function see ?extract_catch_data_cpue_est param release_data
@@ -392,7 +392,7 @@ RB_haul_data <- extract_catch_data_cpue_est(catch_data=Catch_data_RB,release_dat
                                             catch_season = Seasons)
 ```  
 
-The first six hauls from the single vector of simulated CPUE values from 486_3 for the 2017 season looks like this:
+The first six hauls from the single vector of simulated CPUE values from RB_TOA for the 2017 season looks like this:
 
 ```{r}
 head(RB_haul_data) 
@@ -420,7 +420,7 @@ RefArea_haul_data_test <- extract_catch_data_cpue_est(catch_data=Catch_data_RefA
 
 ```
 
-Fishable seabed area values for a number of Research Blocks are stored in the BERT R package as a two column dataframe called RB_seabed_area. The first column contains the Research Block codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values. In the example below the RB_seabed_area parameter value is selected for Research Block 486_3. For further information on this data see ?RB_seabed_area
+Fishable seabed area values for a number of Research Blocks are stored in the BERT R package as a two column dataframe called RB_seabed_area. The first column contains the Research Block codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values. In the example below the RB_seabed_area parameter value is selected for Research Block RB_TOA. For further information on this data see ?RB_seabed_area
 ```{r}
 
 # remove survey year col from the matrix for input into multi release function
@@ -446,7 +446,7 @@ n_boot <- 10000
 ```
 
 
-The point CPUE-by-seabed area biomass estimate of TOA in 486_3 (i.e. Est) for the 2017 season is stored in obj and in summary(CPUE_seabed_boot) the 95% confidence intervals from the boostrapped biomass estimation are also stored in summary(CPUE_seabed_boot). All of these values, along with the parameter input values used in calculating the point estimates are stored in the store_annual_estimates dataframe that is passed to store_biomass_estimates_CPUE
+The point CPUE-by-seabed area biomass estimate of TOA in RB_TOA (i.e. Est) for the 2017 season is stored in obj and in summary(CPUE_seabed_boot) the 95% confidence intervals from the boostrapped biomass estimation are also stored in summary(CPUE_seabed_boot). All of these values, along with the parameter input values used in calculating the point estimates are stored in the store_annual_estimates dataframe that is passed to store_biomass_estimates_CPUE
 
 ```{r}
 obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
@@ -479,10 +479,10 @@ store_biomass_estimates_CPUE$Method<-rep("CPUE-by-seabed area",nrow(store_biomas
 
 ```{r,echo=FALSE}
 
-# do the same for 5843a_1 except dont need to go through all the steps 
+# do the same for RB_TOP except dont need to go through all the steps 
 
 # use RB as an index 
-RB <- "5843a_1"
+RB <- "RB_TOP"
 
 # restrict Release data to relevant research block 
 Release_data_RB <- release_data_sim_RB[release_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in%RB,]
@@ -597,10 +597,10 @@ for (y in Survey_est){
 }
 
 
-store_biomass_estimates_CPUE_5843a_1 <- subset(store_annual_estimates,select= c(RB,Species,Season,RB_N_Hauls,Est,CI_lower,CI_upper))
-store_biomass_estimates_CPUE_5843a_1$Method<-rep("CPUE-by-seabed area",nrow(store_biomass_estimates_CPUE_5843a_1))
+store_biomass_estimates_CPUE_RB_TOP <- subset(store_annual_estimates,select= c(RB,Species,Season,RB_N_Hauls,Est,CI_lower,CI_upper))
+store_biomass_estimates_CPUE_RB_TOP$Method<-rep("CPUE-by-seabed area",nrow(store_biomass_estimates_CPUE_RB_TOP))
 
-store_biomass_estimates_CPUE <- rbind(store_biomass_estimates_CPUE,store_biomass_estimates_CPUE_5843a_1)
+store_biomass_estimates_CPUE <- rbind(store_biomass_estimates_CPUE,store_biomass_estimates_CPUE_RB_TOP)
 
 ```
 
@@ -636,7 +636,7 @@ season prior to season $j$, $t$ is the post-tagging mortality rate of 0.1
 $M$ is natural mortality where $M$ = 0.13 for Antarctic toothfish (_D. mawsoni_)
 (WG-FSA-SAM-06/08) and 0.155 for Patagonian toothfish (_D. eleginoides_) (Candy 2011).
 
-In the absence of an estimate of movement, the number of tagged fish available for recapture was calculated using a three-year moving window that was applied to release data to account for potential movement-related bias (SC-CAMLR-XXXV/05, paragraph 2.34). However, WG-FSA-17 agreed that only tagged fish that had been at liberty for 1 year should be included in the tagged fish available for recapture estimates in Research Blocks 486_2 and 486_3 (WG-FSA-17, paragraph 4.80). Different functions are called in this R package depending on whether multiple years of tagged fish releases or just a single year of tagged fish releases are included in biomass estimation. When only a single year of tagged fish releases are included in estimates then the single_release function should be used and when multiple years of tagged fish releases are included the multi_release function should be used. 
+In the absence of an estimate of movement, the number of tagged fish available for recapture was calculated using a three-year moving window that was applied to release data to account for potential movement-related bias (SC-CAMLR-XXXV/05, paragraph 2.34). However, WG-FSA-17 agreed that only tagged fish that had been at liberty for 1 year should be included in the tagged fish available for recapture estimates in Research Blocks 486_2 and RB_TOA (WG-FSA-17, paragraph 4.80). Different functions are called in this R package depending on whether multiple years of tagged fish releases or just a single year of tagged fish releases are included in biomass estimation. When only a single year of tagged fish releases are included in estimates then the single_release function should be used and when multiple years of tagged fish releases are included the multi_release function should be used. 
 
 The uncertainty around the point estimates was calculated using a non-parametric bootstrap (Efron and Tibshirani 1993; Chernick 2008). This uncertainty in the estimate is made up of two components. Firstly there is uncertainity in the expected number tagged fish that are available for recapture immediately prior to fishing for the assumed values of tag-induced mortality, tag-loss and natural mortality. In the estimation of this uncertainty, the probability that a tagged fish will survive tagging, natural mortality and not lose its tags is assumed independent from other tagged fish. We undertook the following steps, implementing the probability of each tagged fish surviving the tagging process and the annual natural morality and tag loss as Bernoulli trials (Binomial probabilities).
 
@@ -663,9 +663,9 @@ The uncertainty was then quantified by taking quantiles of the $B^i_x$, for exam
 Note that in the results the TOA abbreviation for D.mawsoni (TOA) and D.eleginoides (TOP) are used consistently throughout the results below. 
 
 
-## Chapman mark-recapture biomass estimation of Patagonian toothfish (TOP) in Research Block 5843a_1
+## Chapman mark-recapture biomass estimation of Patagonian toothfish (TOP) in Research Block RB_TOP
 
-In this example toothfish biomass is estimated using the Chapman mark-recapture method in 5843a_1 based on simulated data and the estimated released fish weights described above. 
+In this example toothfish biomass is estimated using the Chapman mark-recapture method in RB_TOP based on simulated data and the estimated released fish weights described above. 
 
 Specify number of bootstrap replicates 
 ```{r,echo=TRUE}
@@ -689,11 +689,11 @@ recapture_data_sim_RB <- droplevels(recapture_data_sim_RB[!is.na(recapture_data_
 
 ```
 
-Select data from Research Block 5843a_1
+Select data from Research Block RB_TOP
 
 ```{r}
 # define Research blocks 
-RB <- "5843a_1"
+RB <- "RB_TOP"
 
 
 Recapture_data <- recapture_data_sim_RB[recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RELEASE"]]%in%RB & recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RECAPTURE"]]%in%RB,]
@@ -704,7 +704,7 @@ Catch_data <- catch_data_sim_RB[catch_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in%RB
 ```
 
 
-Tagged fish releases, recaptures and catch data for Research Block 5843a_1 are subset to include only fields that are relevant to the Chapman mark-recapture estimates   
+Tagged fish releases, recaptures and catch data for Research Block RB_TOP are subset to include only fields that are relevant to the Chapman mark-recapture estimates   
 
 ```{r}  
 Catch_data <- data.frame(Catch_data$ID,Catch_data$Season,Catch_data$CRUISE_ID,Catch_data$SET_ID,
@@ -720,7 +720,7 @@ names(Recapture_data)<- c("SEASON_RELEASE","SEASON_RECAPTURE","CRUISE_ID_RECAPTU
 ```  
 
 
-Specify the target species. In this example it will be TOP as 5843a_1 is a Research Block where TOP are targetted
+Specify the target species. In this example it will be TOP as RB_TOP is a Research Block where TOP are targetted
 ```{r}
 
 # ensure only data from the relevant RB is included 
@@ -730,8 +730,8 @@ target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 In this example tagged fish recaptures that ahev been at liberty for up to 3 years are included
 
 ```{r}  
-if(RB%in%c("486_2","486_3")){
-  # for 486_2 and 486_3 WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
+if(RB%in%c("486_2","RB_TOA")){
+  # for 486_2 and RB_TOA WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
   # so only include recaptures from the previous year of release
   Recapture_data <- Recapture_data[Recapture_data$SEASON_RECAPTURE-Recapture_data$SEASON_RELEASE==1,]
 }else{ # all other RBs recaptures are limited within 3 years of release
@@ -796,7 +796,7 @@ for (y in Survey_est){
   
   # if Season releases is > 3 then restrict it to the past three years
   Season_releases <- seq(min(Survey_years),y,1)
-  if(RB%in%c("486_2","486_3") & length(Season_releases)>1){
+  if(RB%in%c("486_2","RB_TOA") & length(Season_releases)>1){
     # 1 years of releases are included as the 1 year prior to the current season (y) 
     # are used in calculating the tagged fish available for recapture
     Season_releases <- seq(y-1,y,1)}else{
@@ -862,7 +862,7 @@ tag_pars <- list("mean_wt"=0, "method"="Chapman", "unit"="kg", "type"=1,
 
 ```
 
-If more that two release seasons are included then the multi_release function is required and if not then the single_release function is used. In the example from 5843a_1 the multi_release function is used as Season_releases > 2
+If more that two release seasons are included then the multi_release function is required and if not then the single_release function is used. In the example from RB_TOP the multi_release function is used as Season_releases > 2
 
 
 ```{r}    
@@ -911,10 +911,10 @@ store_biomass_estimates_chapman$Method <- rep("Chapman",nrow(store_biomass_estim
 ```
 
 ```{r,echo=FALSE}
-# Repeat Chapman estimate for 486_3 except dont need to go though all the steps
+# Repeat Chapman estimate for RB_TOA except dont need to go though all the steps
 
 # define Research blocks 
-RB <- "486_3"
+RB <- "RB_TOA"
 
 Recapture_data <- recapture_data_sim_RB[recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RELEASE"]]%in%RB & recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RECAPTURE"]]%in%RB,]
 
@@ -939,8 +939,8 @@ names(Recapture_data)<- c("SEASON_RELEASE","SEASON_RECAPTURE","CRUISE_ID_RECAPTU
 target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 
 
-if(RB%in%c("486_2","486_3")){
-  # for 486_2 and 486_3 WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
+if(RB%in%c("486_2","RB_TOA")){
+  # for 486_2 and RB_TOA WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
   # so only include recaptures from the previous year of release
   Recapture_data <- Recapture_data[Recapture_data$SEASON_RECAPTURE-Recapture_data$SEASON_RELEASE==1,]
 }else{ # all other RBs recaptures are limited within 3 years of release
@@ -976,7 +976,7 @@ for (y in Survey_est){
   
   # if Season releases is > 3 then restrict it to the past three years
   Season_releases <- seq(min(Survey_years),y,1)
-  if(RB%in%c("486_2","486_3") & length(Season_releases)>1){
+  if(RB%in%c("486_2","RB_TOA") & length(Season_releases)>1){
     # 1 years of releases are included as the 1 year prior to the current season (y) 
     # are used in calculating the tagged fish available for recapture
     Season_releases <- seq(y-1,y,1)}else{
@@ -1051,16 +1051,16 @@ if(length(Season_releases)>2){
 
 # store Chapman estimates with inputs
 
-store_biomass_estimates_chapman_486 <-subset(store_annual_estimates,select=c(RB,Species,Season,Est,CI_lower,
+store_biomass_estimates_chapman_TOA <-subset(store_annual_estimates,select=c(RB,Species,Season,Est,CI_lower,
                                                                          CI_upper,N_recaptures,RB_N_Hauls))
-store_biomass_estimates_chapman_486$Method <- rep("Chapman",nrow(store_biomass_estimates_chapman_486))
+store_biomass_estimates_chapman_TOA$Method <- rep("Chapman",nrow(store_biomass_estimates_chapman_TOA))
 
-# bind together with 5843a_1 estimates 
-store_biomass_estimates_chapman <- rbind(store_biomass_estimates_chapman,store_biomass_estimates_chapman_486)
+# bind together with RB_TOP estimates 
+store_biomass_estimates_chapman <- rbind(store_biomass_estimates_chapman,store_biomass_estimates_chapman_TOA)
 
 ```
 
-To present results in both table form and plots we combined the dataframes that stored the CPUE-by-seabed area estimates with the Chapman mark-recapture estimates. While the worked examples provided above only included a CPUE-by-seabed area estimate for 486_3 and Chapman mark-recapture biomass estimate for 5843a_1, both biomass estimates were made for both Research blocks for completeness and comparison in the results below. 
+To present results in both table form and plots we combined the dataframes that stored the CPUE-by-seabed area estimates with the Chapman mark-recapture estimates. While the worked examples provided above only included a CPUE-by-seabed area estimate for RB_TOA and Chapman mark-recapture biomass estimate for RB_TOP, both biomass estimates were made for both Research blocks for completeness and comparison in the results below. 
 
 
 ```{r}
