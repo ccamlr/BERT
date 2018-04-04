@@ -1087,14 +1087,14 @@ library(ggplot2)
 ```
 
 
-```{r,echo=FALSE}
-store_B_est_most_recent <- store_B_est_all
+```{r,echo=TRUE}
 
 # remove hauls and catch limit 
-store_B_est_most_recent<- subset(store_B_est_most_recent, select=-c(RB_N_Hauls,Season))
-store_B_est_most_recent  <- store_B_est_most_recent[order(store_B_est_most_recent$RB),]
-row.names(store_B_est_most_recent)<- NULL
-store_B_est_most_recent
+store_B_est_all <- subset(store_B_est_all, select=-c(RB_N_Hauls,Season))
+store_B_est_all  <- store_B_est_all[order(store_B_est_all$RB),]
+row.names(store_B_est_all)<- NULL
+
+store_B_est_all
 ```
 
 
@@ -1102,11 +1102,11 @@ store_B_est_most_recent
 
 A plot of the point biomass estimates with confidence intervals in each Research Blocks is also provided for visual comparison. 
 
-```{r,echo=FALSE,warning=FALSE,fig.height=4, fig.width=6}
+```{r,echo=TRUE,warning=FALSE,fig.height=4, fig.width=6}
 
 # Plot biomass estimate time series per species and research block
 
-Plot_data=store_B_est_most_recent
+Plot_data=store_B_est_all
 Plot_data=Plot_data[Plot_data$RB%in%unique(Plot_data$RB[Plot_data$Method%in%"Chapman"]),]
 limits=ggplot2::aes(ymin=CI_lower,ymax =CI_upper)
 dodge = ggplot2::position_dodge(width=0.5)
