@@ -17,15 +17,14 @@ comment = "#>"
 ```
 ## Introduction
 
-
-This vignette describes the `BERT`: Biomass Estimation for Research on Toothfish package. The `BERT` package was developed to assist CCAMLR's Working Groups with the estimation of the local biomass of toothfish in Research Blocks/data-poor areas. 
+This vignette describes the `BERT: Biomass Estimation for Research on Toothfish package`. The `BERT` package was developed to assist CCAMLR's Working Groups with the estimation of the local biomass of toothfish in Research Blocks/data-poor areas. 
 
 
 The main purpose of this package is to provide functions that:  
 (1)  can be used to estimate local biomass using the most up-to-date CPUE-by-seabed area and Chapman mark-recapture biomass estimation methods agreed by WG-FSA and WG-SAM and;   
 (2)  format the necessary CCAMLR data for input into the biomass estimation method functions  
 
-Methods used to estimate local toothfish biomass in the data-poor CCAMLR fisheries include a CPUE-by-seabed-area analogy method (Agnew et al, 2009) and a Chapman tag-recapture estimator (Hillary et al, 2009). Both methods have undergone modification in the working group meetings over the past 10 years with changes to formulas, fixed parameter values, appropriate time series of catch and tagging data for inclusion and the data quality and cleaning processes applied. To address this issue WG-SAM-16 agreed (and documented) a standardised default method of applying the CPUE-by-seabed area and the Chapman tag release-recapture methods of estimating biomass, and requested that the Secretariat apply these methods to provide a single set of biomass estimates of D. mawsoni or D.eleginoides in Research Blocks  in Subareas 58.4 and 48.6 that could be further evaluated by WG-FSA (SC-CAMLR-XXXV, Annex 5, paragraph 2.28). 
+Methods used to estimate local toothfish biomass in the data-poor CCAMLR fisheries include a CPUE-by-seabed-area analogy method (Agnew et al, 2009) and a Chapman tag-recapture estimator (Hillary et al, 2009). Both methods have undergone modification in the working group meetings over the past 10 years with changes to formulas, fixed parameter values, appropriate time series of catch and tagging data for inclusion and the data quality and cleaning processes applied. To address this issue WG-SAM-16 agreed (and documented) a standardised default method of applying the CPUE-by-seabed area and the Chapman tag release-recapture methods of estimating biomass, and requested that the Secretariat apply these methods to provide a single set of biomass estimates of D. mawsoni or D. eleginoides in Research Blocks  in Subareas 58.4 and 48.6 that could be further evaluated by WG-FSA (SC-CAMLR-XXXV, Annex 5, paragraph 2.28). 
 
 In this vignette provides examples of both methods that are similar in lay-out to the R-markdown developed by the Secretariat for WG-FSA-17 except instead of using "real data" we provide simulated datasets for a Research block that targets Antarctic toothfish (i.e. RB_TOA) and Research block that targets Patagonian toothfish (i.e. RB_TOP). Given data are simulated there are no data extract and processing steps included here, but see paper WG-FSA-17/42 or the R markdown document referred to above for details on these steps.
 
@@ -54,14 +53,14 @@ The CCAMLR data necessary for both methods can be provided in the same data extr
 
 ## Simulated data
 
-Due to CCAMLR's data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the simulated datasets for Research Blocks see:
+Due to CCAMLR's data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the four simulated datasets for Research Blocks see:
 
 catch data: `?catch_data_sim_RB`
 released tagged fish data: `?release_data_sim_RB`
 length and weight data: `?length_weight_data_sim_RB`
 matched tagged fish release and recapture: `?recapture_data_sim_RB`
 
-And for Reference Areas see:
+And for the three Reference Areas datasets see:
 catch data: `?catch_data_sim_RefArea`
 released tagged fish data: `?release_data_sim_RefArea`
 length and weight data: `?length_weight_data_sim_RefArea`
@@ -77,7 +76,6 @@ This is done using the `est_fish_weight` function.
 
 Using the simulated release data and length-weight data from Research Blocks and Reference Areas. 
 The weights of tagged fish releases are estimated and added to the existing data frames as EST_WEIGHT_KG
-
 For input requirements for this function see the example below and/or `?est_fish_weight`
 
 ```{r}
@@ -110,7 +108,7 @@ The point estimation of local biomass using the catch-per-unit-effort (CPUE) by 
 
 $$ B_x = \frac{I_x \times A_x \times B_r}{I_r \times Ar} $$                                         
 
-Where the subscripts $x$ and $r$ denote the parameter from the research block and reference area respectively. Different reference areas were selected for Research Blocks depending on the target species. WG-SAM-16 agreed that the Ross Sea Region should be used as a reference area for Research Blocks that target D.mawsoni and the HIMI area should be used as a reference area for Research Blocks that target D.eleginoides (WG-SAM-16, para 2.30). 
+Where the subscripts $x$ and $r$ denote the parameter from the research block and reference area respectively. Different reference areas were selected for Research Blocks depending on the target species. WG-SAM-16 agreed that the Ross Sea Region (**88.1, 88.2 and the units** ) should be used as a reference area for Research Blocks that target D.mawsoni and the HIMI area (Division 58.5.2) should be used as a reference area for Research Blocks that target D.eleginoides (WG-SAM-16, para 2.30). 
 
 $Ix$ is the median of the haul-by-haul CPUE (kg/km) over the past three seasons in which fishing has occurred in Research Block $x$. For example, if fishing had occurred in Research block $x$ in 2017, 2015 and 2014, then all of these hauls will be included in calculating the median CPUE for the 2017 fishing season. 
 
@@ -177,7 +175,8 @@ Catch_data_RB<- data.frame(Catch_data_RB$ID,Catch_data_RB$Season,Catch_data_RB$C
 
 ```
 
-The Reference Areas for a Research Block is based on the species that is being targeted. As outlined in the general methods above the Reference Area for Research Blocks where TOA are targeted is the Ross Sea Region (RSR). Hence if the Research Block does not target TOP, then it targets TOA and the the Ref_area is "RSR" 
+
+The Reference Areas for a Research Block is based on the species that is being targetted. As outlined in the general methods above the Reference Area for Research Blocks where TOA are targetted is the Ross Sea Region (RSR). Hence if the Research Block does not target TOP, then it targets TOA and the the `Ref_area` is "RSR" 
 
 
 ```{r}  
@@ -213,7 +212,8 @@ Catch_data_RefArea <- data.frame(Catch_data_RefArea$ID,Catch_data_RefArea$Season
 ```
 
 
-If the Reference Area is "RSR" then the Reference area biomass (i.e. Ref_area_biomass) is 92693.07 tonnes - as this was the estimated vulnerable biomass from the 2017 stock assessment. The Ref_area_CV from the Ross Sea stock assessment for the vulnerable biomass was 0.073
+
+If the Reference Area is "RSR" then the Reference area biomass (i.e. `Ref_area_biomass`) is 92693.07 tonnes - as this was the estimated vulnerable biomass from the 2017 stock assessment. The `Ref_area_CV` from the Ross Sea stock assessement for the vulnerable biomass was 0.073
 
 ```{r}
 # 2017 values from WG-FSA-17
@@ -225,7 +225,7 @@ Ref_area_CVs <-ifelse(Ref_area%in%"HIMI",0.072,0.073)
 ```  
 
 
-Annual estimates are made for each CCAMLR fishing season for which data are available and all parameter values that are used in calculating biomass are stored with each estimate in store_annual_estimates. Survey_est are the seasons for which catch data were available, which makes estimation of biomass possible. In this example there is only a single year of data included so there is only one annual estimate.
+Annual estimates are made for each CCAMLR fishing season for which data are available and all parameter values that are used in calculating biomass are stored with each estimate in `store_annual_estimates`. `Survey_est` are the seasons for which catch data were available, which makes estimation of biomass possible. In this example there is only a single year of data included so there is only one annual estimate.
 
 ```{r}
 Survey_est<- sort(unique(Catch_data_RB$Catch_data_RB.Season))
@@ -239,7 +239,9 @@ names(store_annual_estimates)=c("RB","Species","Season","Ref_area","RefArea_seab
 store_annual_estimates$Season <- Survey_est
 ```
 
-In Research Blocks the median CPUE can includes data from the last three seasons in which fishing occurred. Depending on the season for which biomass is being estimated (i.e. y) data from all seasons will be included if there are less than three seasons, but if there are more than three seasons of data then this is restricted to the last three years. 
+
+In Research Blocks the median CPUE can includes data from the last three seasons in which fishing occured. Depending on the season for which biomass is being estimated (i.e. $y$) data from all seasons will be included if there are less than three seasons, but if there are more than three seasons of data then this is restricted to the last three years. 
+
 
 ```{r}  
 for (y in Survey_est){
@@ -253,7 +255,8 @@ for (y in Survey_est){
 }
 ```
 
-With the relevant seasons to include in Research Blocks specified, the `extract_catch_data_cpue_est` function uses the catch data and tagged fish release data from Research Blocks to format CPUE data for input into the CPUE_seabed function below.
+
+With the relevant seasons to include in Research Blocks specified, the `extract_catch_data_cpue_est` function uses the catch data and tagged fish release data from Research Blocks to format CPUE data for input into the `CPUE_seabed` function below.
 
 ```{r}
 RB_haul_data <- extract_catch_data_cpue_est(catch_data=Catch_data_RB,release_data=Release_data_RB,
@@ -277,7 +280,8 @@ The seasons for which CPUE values should be calculated in Reference Areas is spe
 Ref_area_seasons <-c(2015,2016,2017)
 ```  
 
-With the relevant seasons to include in the Reference Area specified, the `extract_catch_data_cpue_est` function uses the simulated catch data and tagged fish release data from the Ross Sea Reference area to format CPUE data for input into the CPUE_seabed function below.  
+
+With the relevant seasons to include in the Reference Area specified, the `extract_catch_data_cpue_est` function uses the simulated catch data and tagged fish release data from the Ross Sea Reference area to format CPUE data for input into the `CPUE_seabed` function below.  
 
 
 ```{r}
@@ -289,7 +293,8 @@ RefArea_haul_data_test <- extract_catch_data_cpue_est(catch_data=Catch_data_RefA
 
 ```
 
-Fishable seabed area values for a number of Research Blocks are stored in the BERT R package as a two column dataframe called RB_seabed_area. The first column contains the Research Block codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values. In the example below the RB_seabed_area parameter value is selected for Research Block RB_TOA. For further information on this data see `?RB_seabed_area`
+
+Fishable seabed area values for a number of Research Blocks are stored in the `BERT` R package as a two column dataframe called RB_seabed_area. The first column contains the Research Block codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values. In the example below the `RB_seabed_area` parameter value is selected for Research Block RB_TOA. For further information on this data see `?RB_seabed_area`
 ```{r,echo=FALSE}
 # remove survey year col from the matrix for input into multi release function
 if(RB=="RB_TOA"){
@@ -301,12 +306,15 @@ if(RB=="RB_TOP"){
 ```
 
 
+
 ```{r,eval=FALSE}
 # remove survey year col from the matrix for input into multi release function
 RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%RB]
 ```    
 
-Fishable seabed area values for Reference Areas are also stored in the BERT R package as a two column dataframe called Ref_area_seabed_area. The first column contains the Reference Area codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values for each Research Block. Given it was agreed at WG-SAM-17 the seabed area in the Ross Sea Reference Area should only include those areas that are open to fishing, the "RSR_open" area is selected. For further information on these data see `?Ref_area_seabed_area`
+
+Fishable seabed area values for Reference Areas are also stored in the `BERT` R package as a two column dataframe called `Ref_area_seabed_area`. The first column contains the Reference Area codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values for each Research Block. Given it was agreed at WG-SAM-17 the seabed area in the Ross Sea Reference Area should only include those areas that are open to fishing, the "RSR_open" area is selected. For further information on these data see ?`Ref_area_seabed_area`
+
 
 ```{r}
 # change Reference area seabed area RSR_open
@@ -325,7 +333,9 @@ n_boot <- 10000
 ```
 
 
+
 The point CPUE-by-seabed area biomass estimate of TOA in RB_TOA (i.e. Est) for the 2017 season is calculated using the `cpue_bio` function  that accepts a single value for each parameter input. The `cpue_bio` function is called by the `CPUE_seabed` function that accepts vector data (which is the haul-by-haul) for catch data inputs. The `CPUE_seabed` function returns the point estimate in `obj$est`. The output from the `cpue_bootrap` function stored in `CPUE_seabed_boot` also returns the point estimate in `summary(CPUE_seabed_boot)["Est"]` and the lower 95% confidence interval in `summary(CPUE_seabed_boot)["2.5%"]` and upper 95% confidence interval in `summary(CPUE_seabed_boot)["97.5%"]`.
+
 
 ```{r}
 obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
@@ -521,20 +531,21 @@ season prior to season $j$, $t$ is the post-tagging mortality rate of 0.1
 $M$ is natural mortality where $M$ = 0.13 for Antarctic toothfish (_D. mawsoni_)
 (WG-FSA-SAM-06/08) and 0.155 for Patagonian toothfish (_D. eleginoides_) (Candy 2011).
 
-In the absence of an estimate of movement, the number of tagged fish available for recapture was calculated using a three-year moving window that was applied to release data to account for potential movement-related bias (SC-CAMLR-XXXV/05, paragraph 2.34). However, WG-FSA-17 agreed that only tagged fish that had been at liberty for 1 year should be included in the tagged fish available for recapture estimates in Research Blocks 486_2 and RB_TOA (WG-FSA-17, paragraph 4.80). Different functions are called in this R package depending on whether multiple years of tagged fish releases or just a single year of tagged fish releases are included in biomass estimation. When only a single year of tagged fish releases are included in estimates then the `single_release` function should be used and when multiple years of tagged fish releases are included the `multi_release` function should be used. 
+
+In the absence of an estimate of movement, the number of tagged fish available for recapture was calculated using a three-year moving window that was applied to release data to account for potential movement-related bias (SC-CAMLR-XXXV/05, paragraph 2.34). However, WG-FSA-17 agreed that only tagged fish that had been at liberty for 1 year should be included in the tagged fish available for recapture estimates in Research Blocks 486_2 and 486_3 (WG-FSA-17, paragraph 4.80). Different functions are called in this R package depending on whether multiple years of tagged fish releases or just a single year of tagged fish releases are included in biomass estimation. When only a single year of tagged fish releases are included in estimates then the `single_release` function should be used and when multiple years of tagged fish releases are included the `multi_release` function should be used. 
 
 The uncertainty around the point estimates was calculated using a non-parametric bootstrap (Efron and Tibshirani 1993; Chernick 2008). This uncertainty in the estimate is made up of two components. Firstly there is uncertainty in the expected number tagged fish that are available for recapture immediately prior to fishing for the assumed values of tag-induced mortality, tag-loss and natural mortality. In the estimation of this uncertainty, the probability that a tagged fish will survive tagging, natural mortality and not lose its tags is assumed independent from other tagged fish. We undertook the following steps, implementing the probability of each tagged fish surviving the tagging process and the annual natural morality and tag loss as Bernoulli trials (Binomial probabilities).
 
 1)	Tag release mortality is applied in the season of release
 2)	The recaptures are removed and scaled by the tag-reporting rate, noting that tag-reporting rate is currently assumed to be 100%.
-3)	Natural mortality and tag loss are implemented 
+3)	Natural mortality and tag loss are applied 
 
 Steps 2 and 3 were then repeated for each season that the tags are at liberty, but tag release mortality is only applied in the first season. For the ith bootstrap replicate this represents the $n^i_{j–1}$. All processes (e.g. tag-induced mortality, natural mortality, tag-loss) were implemented as instantaneous rates to account for processes such as natural mortality and tag-loss that compete with one another to decrease the number of available tags over the season.
 
 
 Secondly, we need to account for the uncertainty in the haul data. If the experiment was repeated we would not expect to recapture the same number of tagged fish. To account for this uncertainty in the bootstrap the following process is applied
 
-1)	The hauls in the season were sampled with replacement.Noting that zero tagged-fish recapture and zero catch hauls were included in bootstrapped resampling. 
+1)	The hauls in the season were sampled with replacement. Noting that zero tagged-fish recapture and zero catch hauls were included in bootstrapped resampling. 
 2)	The sum of the catches and the recaptures in the ith bootstrap replicate were calculated as the $c^i_j$ and $mx^i_j$ respectively.
 
 Bootstrap replicates of the haul data where there were zero tag recaptures were used to estimate biomass ($B^i_j$). If the Petersen method had been used the would have been infinite.
@@ -625,12 +636,13 @@ if(RB%in%c("486_2","RB_TOA")){
 ```
 
 Survey years specify the number of years of tagged fish releases to include in the tag release and recapture matrix that is used in the `multi_release` function that calculates the tagged fish available for recapture 
+
 ```{r}
 Survey_years <- seq(min(Release_data[["SEASON"]],na.rm = TRUE),max(Release_data[["SEASON"]],na.rm = TRUE),1)
 
 ```
 
-Release and recapture data are restricted to the target species and subset to include only columns of data that are required for the tag release and recapture matrix that is generated by the extract_recaptures_season function
+Release and recapture data are restricted to the target species and subset to include only columns of data that are required for the tag release and recapture matrix that is generated by the `extract_recaptures_season` function
 
 ```{r}
 # for data that is input into tag release and recap matrix  remove non-target species
@@ -660,7 +672,7 @@ Survey_est<- unique(Recapture_data$SEASON_RECAPTURE)
 ```
 
 
-Annual estimates are made for each CCAMLR fishing season for which tagged fish recapture data are available and all parameter values that are used in calculating biomass are stored with each estimate in store_annual_estimates. For the simulate data example there is only a single year (2017) of tag recapture data included so there is only one annual estimate.
+Annual estimates are made for each CCAMLR fishing season for which tagged fish recapture data are available and all parameter values that are used in calculating biomass are stored with each estimate in `store_annual_estimates`. For the simulate data example there is only a single year (2017) of tag recapture data included so there is only one annual estimate.
 
 ```{r}
 store_annual_estimates<-data.frame(matrix(0,nrow=length(Survey_est),ncol=10))
@@ -674,7 +686,7 @@ store_annual_estimates$Season <- Survey_est
 ```
 
 
-Variable y is the survey year in Survey_est for which toothfish biomass can be estimated. Depending on whether y is one or more years/seasons from the minimum year of tagged fish release it will need to be adjusted depending on the Research Block. In this example there are three years of tagged fish releases (i.e. 2015,2016 & 2017),and Survey_est is only one year (i.e. 2017). Consequently, the season_releases is not > 3 years so it does not need to be adjusted. 
+Variable $y$ is the survey year in `Survey_est` for which toothfish biomass can be estimated. Depending on whether $y$ is one or more years/seasons from the minimum year of tagged fish release it will need to be adjusted depending on the Research Block. In this example there are three years of tagged fish releases (i.e. 2015, 2016 & 2017), and `Survey_est` is only one year (i.e. 2017). Consequently, the season_releases is not > 3 years so it does not need to be adjusted. 
 
 ```{r}  
 for (y in Survey_est){
@@ -696,7 +708,7 @@ for (y in Survey_est){
 ```
 
 
-With the relevant season(s) of releases and catch data to include in the Research Block specified, the extract_catch_data_tag_est function uses the catch data and tagged fish release data from Research Blocks to format CPUE data for input into the CPUE_seabed function below. An example of how all the inputs for this function have been formatted are provided above, but for more information see `?extract_catch_data_tag_est`
+With the relevant season(s) of releases and catch data to include in the Research Block specified, the `extract_catch_data_tag_est` function uses the catch data and tagged fish release data from Research Blocks to format CPUE data for input into the CPUE_seabed function below. An example of how all the inputs for this function have been formatted are provided above, but for more information see ?`extract_catch_data_tag_est`
 
 ```{r}
 haul_data <- extract_catch_data_tag_est(catch_data=Catch_data,release_data=Release_data,
@@ -706,7 +718,9 @@ haul_data <- extract_catch_data_tag_est(catch_data=Catch_data,release_data=Relea
 
 ```    
 
-The output haul_data has the CAUGHT_KG_TOTAL of substantial catch (i.e. retained catch + tagged and released fish from catch season y) of each simulated haul in 2017 in the first column and each subsequent column has the number of simulated recaptures in 2017 by the year it was released for each haul. This has been formatted for the `multi_release` function which provides estimates based on the total number of recaptures irrespective of the release year, but also provides co-hort based estimates using recaptures for each release event. The first six hauls of data from haul_data looks as follows:
+
+The output `haul_data` has the `CAUGHT_KG_TOTAL` of substantial catch (i.e. retained catch + tagged and released fish from catch season $y$) of each simulated haul in 2017 in the first column and each subsequent column has the number of simulated recaptures in 2017 by the year it was released for each haul. This has been formatted for the `multi_release` function which provides estimates based on the total number of recaptures irrespective of the release year, but also provides cohort based estimates using recaptures for each release event. The first six hauls of data from `haul_data` looks as follows:
+
 
 ```{r}
 
@@ -722,14 +736,15 @@ colSums(haul_data)
 ```
 
 
-The matrix of the total number of tagged fish releases and tag recaptures by season (tag_data_matrix) is indexed to include only the relevant seasons of releases and recaptures based on Season_releases 
+The matrix of the total number of tagged fish releases and tag recaptures by season (`tag_data_matrix`) is indexed to include only the relevant seasons of releases and recaptures based on `Season_releases` 
 
 ```{r}    
 tags <- tag_data_matrix[match(min(Season_releases),tag_data_matrix$Year):(match(max(Season_releases),tag_data_matrix$Year)-1),]
 tags <- tags[,names(tags)%in%c("Releases",Season_releases)]
 ``` 
 
-The `multi_release` and `single_release` functions that are used to apply the Chapman mark-recapture biomass estimation method require a list of parameter values and specifications that are passed to these functions in tag_pars. These parameters include a mean fish weight (mean_wt) which is set to zero as the mean fish weight is not included in the Chapman biomass estimation formula agreed at WG-SAM-16, the method to be used (as a Chapman and Peterson method can be specified), the units of the catch (which in this case is kg), the Ricker type of fishery (which in this case is type 1) and a number of other parameters i.e. natural mortality (nat_mort), tagging mortality (tag_mort), tag reporting rate (reporting), tag_shedding (chronic_shed) that can vary in relation to the target_species. For further details on parameter values for each species see above and for more detailed explanations of parameters see `?multi_release` or `?single_release`
+The `multi_release` and `single_release` functions that are used to apply the Chapman mark-recapture biomass estimation method require a list of paramater values and specifications that are passed to these functions in tag_pars. These paramaters include a mean fish weight (`mean_wt`) which is set to zero as the mean fish weight is not included in the Chapman biomass estimation formula agreed at WG-SAM-16, the method to be used (as a Chapman and Peterson method can be specified), the units of the catch (which in this case is kg), the Ricker type of fishery (which in this case is type 1) and a number of other paramters i.e. natural mortality (`nat_mort`), tagging mortaility (`tag_mort`), tag reporting rate (`reporting`), tag shedding (`chronic_shed`) that can vary in relation to the `target_species`. For further details on paramater values for each species see above and for more detailed explanations of paramters see ?`multi_release` or ?`single_release`
+
 
 ```{r}    
 ## expanded tag_parameters
@@ -747,7 +762,8 @@ if(target_species%in%"TOP"){
 
 ```
 
-If more that two release seasons are included then the `multi_release` function is required and if not then the `single_release` function is used. In the example from RB_TOP the `multi_release` function is used as Season_releases > 2
+
+If more that two release seasons are included then the `multi_release` function is required and if not then the `single_release` function is used. In the example from 5843a_1 the `multi_release` function is used as `Season_releases` > 2
 
 
 ```{r}    
