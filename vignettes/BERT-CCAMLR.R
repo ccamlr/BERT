@@ -5,118 +5,8 @@ comment = "#>"
 )
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  devtools::install_github("ccamlr/BERT",build_vignettes=TRUE)
+#  devtools::install_github("ccamlr/BERT",build_vignettes=TRUE,auth_token="7ef7614738c2b3463fc791d4f22a719d61be35fa")
 #  
-
-## ------------------------------------------------------------------------
-# create four simulated datasets similar to what would be provided in data extracts for Research Blocks 
-
-catch_data_sim_RB <- rbind(data.frame(ID=seq(1,200,1),Season=rep(2017,200),
-                                      CRUISE_ID=rep(100,200),
-                                      SET_ID=seq(1,200,1),
-                                      SPECIES_CODE=rep("TOA",200),
-                                      CAUGHT_KG_TOTAL=rnorm(200,mean=1257.80,sd=300),
-                                      LINE_LENGTH=rnorm(200,mean=10000,sd=2000),
-                                      RESEARCH_BLOCK_CODE=rep("486_3",200)),
-                           data.frame(ID=seq(201,400,1),
-                                      Season=rep(2017,200),
-                                      CRUISE_ID=rep(200,200),SET_ID=seq(1,200,1),
-                                      SPECIES_CODE=rep("TOP",200),
-                                      CAUGHT_KG_TOTAL=rnorm(200,mean=274.93,sd=50),
-                                      LINE_LENGTH=rnorm(200,mean=10000,sd=2000),
-                                      RESEARCH_BLOCK_CODE=rep("5843a_1",200)))
-
-## ------------------------------------------------------------------------
-# release data 
-release_data_sim_RB <- rbind(data.frame(SEASON=c(rep(2015,50),rep(2016,50),rep(2017,50)),
-                                        CRUISE_ID=c(rep(40,50),rep(90,50),rep(100,50)),
-                                        SET_ID=sample(seq(1,200,1),150,replace=FALSE),
-                                        SPECIES_CODE=rep("TOA",150),
-                                        RESEARCH_BLOCK_CODE=rep("486_3",150),
-                                        ASD_CODE=rep("486",150),
-                                        LENGTH_CM=rnorm(150,150,10)),
-                             data.frame(SEASON=c(rep(2015,50),rep(2016,50),rep(2017,50)),
-                                        CRUISE_ID=c(rep(45,50),rep(95,50),rep(200,50)),
-                                        SET_ID=sample(seq(1,200,1),150,replace=FALSE),
-                                        SPECIES_CODE=rep("TOP",150),
-                                        RESEARCH_BLOCK_CODE=rep("5843a_1",150),
-                                        ASD_CODE=rep("5843a",150),
-                                        LENGTH_CM=rnorm(150,80,10)))
-
-## ------------------------------------------------------------------------
-# recapture data 
-recapture_data_sim_RB <- rbind(data.frame(SEASON_RELEASE=c(rep(2015,2),rep(2016,6)),
-                                          SEASON_RECAPTURE=rep(2017,8),
-                                          CRUISE_ID_RECAPTURE=rep(100,8),
-                                          SET_ID_RECAPTURE=sample(seq(1,200,1),8),
-                                          SPECIES_CODE_RECAPTURE=rep("TOA",8),
-                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("486_3",8),
-                                          RESEARCH_BLOCK_CODE_RELEASE=rep("486_3",8)),
-                               data.frame(SEASON_RELEASE=c(rep(2015,2),rep(2016,2)),
-                                          SEASON_RECAPTURE=rep(2017,4),
-                                          CRUISE_ID_RECAPTURE=rep(200,4),
-                                          SET_ID_RECAPTURE=sample(seq(1,200,1),4),
-                                          SPECIES_CODE_RECAPTURE=rep("TOP",4),
-                                          RESEARCH_BLOCK_CODE_RECAPTURE=rep("5843a_1",4),
-                                          RESEARCH_BLOCK_CODE_RELEASE=rep("5843a_1",4)))
-
-## ------------------------------------------------------------------------
-# length_weight data 
-length_weight_data_sim_RB <- rbind(data.frame(ASD_CODE=rep("486",200),
-                                              SPECIES_CODE=rep("TOA",200),
-                                              LENGTH_CM=rnorm(200,150,50),
-                                              WEIGHT_KG=rnorm(200,40,10)),
-                                   data.frame(ASD_CODE=rep("5843a",200),
-                                              SPECIES_CODE=rep("TOP",200),
-                                              LENGTH_CM=rnorm(200,80,10),
-                                              WEIGHT_KG=rnorm(200,10,4)))
-# add some random error into weight estimates so model fit to simulated data is not perfect
-error <- sample(seq(0,2,1),200,replace=TRUE)
-# simulate weight based on length-weight relationship
-length_weight_data_sim_RB$WEIGHT_KG <- exp(-12+3*log(length_weight_data_sim_RB$LENGTH_CM))*1.01 + error
-
-## ------------------------------------------------------------------------
-# catch data
-catch_data_sim_RefArea <- rbind(data.frame(ID=seq(1,400,1),Season=rep(2017,400),CRUISE_ID=rep(70,400),
-                                           SET_ID=seq(1,400,1),SPECIES_CODE=rep("TOA",400),
-                                           CAUGHT_KG_TOTAL=rnorm(400,mean=2000,sd=1000),
-                                           LINE_LENGTH=rnorm(200,mean=10000,sd=2000),
-                                           REF_AREA_CODE=rep("RSR",400)),
-                                data.frame(ID=seq(401,800,1),
-                                           Season=rep(2017,400),CRUISE_ID=rep(80,400),
-                                           SET_ID=seq(1,400,1),SPECIES_CODE=rep("TOP",400),
-                                           CAUGHT_KG_TOTAL=rnorm(400,mean=1530,sd=800),
-                                           LINE_LENGTH=rnorm(200,mean=10000,sd=2000)
-                                           ,REF_AREA_CODE=rep("HIMI",400)))
-
-# release data 
-release_data_sim_RefArea <- rbind(data.frame(SEASON=rep(2017,100),CRUISE_ID=rep(70,100),
-                                             SET_ID=sample(seq(1,400,1),100,replace=FALSE),
-                                             SPECIES_CODE=rep("TOA",100),
-                                             REF_AREA_CODE=rep("RSR",100),
-                                             ASD_CODE=rep("881",100),LENGTH_CM=rnorm(100,150,10)),
-                                  data.frame(SEASON=rep(2017,100),CRUISE_ID=rep(80,100),
-                                             SET_ID=sample(seq(1,400,1),100,replace=FALSE),
-                                             SPECIES_CODE=rep("TOP",100),
-                                             REF_AREA_CODE=rep("HIMI",100),
-                                             ASD_CODE=rep("5852",100),
-                                             LENGTH_CM=rnorm(100,80,10)))
-
-
-# length_weight data 
-length_weight_data_sim_RefArea <- rbind(data.frame(ASD_CODE=rep("881",400),
-                                                   SPECIES_CODE=rep("TOA",400),
-                                                   LENGTH_CM=rnorm(400,150,30),
-                                                   WEIGHT_KG=rnorm(400,40,10)),
-                                        data.frame(ASD_CODE=rep("5852",400),
-                                                   SPECIES_CODE=rep("TOP",400),
-                                                   LENGTH_CM=rnorm(400,80,10),
-                                                   WEIGHT_KG=rnorm(400,10,4)))
-# add some random error into weight estimates so model fit to simulated data is not perfect
-error <- sample(seq(0,2,1),400,replace=TRUE)
-# simulate weight based on length-weight relationship
-length_weight_data_sim_RefArea$WEIGHT_KG <- exp(-12+3*log(length_weight_data_sim_RefArea$LENGTH_CM))*1.01 + error
-
 
 ## ------------------------------------------------------------------------
 # load BERT package
@@ -144,7 +34,7 @@ release_data_sim_RefArea$EST_WEIGHT_KG <- est_fish_weight(length_weight_data = l
 ## ----warning=FALSE,echo=TRUE,message=FALSE-------------------------------
 
 # use RB as an index 
-RB <- "486_3"
+RB <- "RB_TOA"
 
 # restrict Release data to relevant research block 
 Release_data_RB <- release_data_sim_RB[release_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in%RB,]
@@ -155,7 +45,7 @@ Catch_data_RB <- catch_data_sim_RB[catch_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in
 
 ## ------------------------------------------------------------------------
 # note only 3 Research Blocks currently target TOP and all others target TOA
-TOP_target_RBs <- c("5843a_1","5844b_1","5844b_2")
+TOP_target_RBs <- c("RB_TOP","5844b_1","5844b_2")
 ## make sure you specifiy target species data 
 target_species <- ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 
@@ -248,10 +138,18 @@ RefArea_haul_data_test <- extract_catch_data_cpue_est(catch_data=Catch_data_RefA
                                                       catch_season = Ref_area_seasons)
 
 
-## ------------------------------------------------------------------------
-
+## ----echo=FALSE----------------------------------------------------------
 # remove survey year col from the matrix for input into multi release function
-RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%RB]
+if(RB=="RB_TOA"){
+  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"486_3"]
+}
+if(RB=="RB_TOP"){
+  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"5843a_1"]  
+}
+
+## ----eval=FALSE----------------------------------------------------------
+#  # remove survey year col from the matrix for input into multi release function
+#  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%RB]
 
 ## ------------------------------------------------------------------------
 # change Reference area seabed area RSR_open
@@ -293,10 +191,10 @@ store_biomass_estimates_CPUE$Method<-rep("CPUE-by-seabed area",nrow(store_biomas
 
 ## ----echo=FALSE----------------------------------------------------------
 
-# do the same for 5843a_1 except dont need to go through all the steps 
+# do the same for RB_TOP except dont need to go through all the steps 
 
 # use RB as an index 
-RB <- "5843a_1"
+RB <- "RB_TOP"
 
 # restrict Release data to relevant research block 
 Release_data_RB <- release_data_sim_RB[release_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in%RB,]
@@ -375,11 +273,17 @@ for (y in Survey_est){
   
   RefArea_haul_data_test <- extract_catch_data_cpue_est(catch_data=Catch_data_RefArea,
                                                         release_data=Release_data_RefArea,
-                                                        measure ="weights",target_species = target_species,
+                                                        measure ="weights",
+                                                        target_species =target_species,
                                                         catch_season = Ref_area_seasons)
   
-  # remove survey year col from the matrix for input into multi release function
-  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%RB]
+  if(RB=="RB_TOA"){
+    RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"486_3"]
+  }
+  if(RB=="RB_TOP"){
+    RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"5843a_1"]  
+  }
+  
   
   # change Reference area seabed area RSR_open
   if(Ref_area=="RSR"){
@@ -411,10 +315,10 @@ for (y in Survey_est){
 }
 
 
-store_biomass_estimates_CPUE_5843a_1 <- subset(store_annual_estimates,select= c(RB,Species,Season,RB_N_Hauls,Est,CI_lower,CI_upper))
-store_biomass_estimates_CPUE_5843a_1$Method<-rep("CPUE-by-seabed area",nrow(store_biomass_estimates_CPUE_5843a_1))
+store_biomass_estimates_CPUE_RB_TOP <- subset(store_annual_estimates,select= c(RB,Species,Season,RB_N_Hauls,Est,CI_lower,CI_upper))
+store_biomass_estimates_CPUE_RB_TOP$Method<-rep("CPUE-by-seabed area",nrow(store_biomass_estimates_CPUE_RB_TOP))
 
-store_biomass_estimates_CPUE <- rbind(store_biomass_estimates_CPUE,store_biomass_estimates_CPUE_5843a_1)
+store_biomass_estimates_CPUE <- rbind(store_biomass_estimates_CPUE,store_biomass_estimates_CPUE_RB_TOP)
 
 
 ## ----echo=TRUE-----------------------------------------------------------
@@ -435,7 +339,7 @@ recapture_data_sim_RB <- droplevels(recapture_data_sim_RB[!is.na(recapture_data_
 
 ## ------------------------------------------------------------------------
 # define Research blocks 
-RB <- "5843a_1"
+RB <- "RB_TOP"
 
 
 Recapture_data <- recapture_data_sim_RB[recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RELEASE"]]%in%RB & recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RECAPTURE"]]%in%RB,]
@@ -463,8 +367,8 @@ target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 
 
 ## ------------------------------------------------------------------------
-if(RB%in%c("486_2","486_3")){
-  # for 486_2 and 486_3 WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
+if(RB%in%c("486_2","RB_TOA")){
+  # for 486_2 and RB_TOA WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
   # so only include recaptures from the previous year of release
   Recapture_data <- Recapture_data[Recapture_data$SEASON_RECAPTURE-Recapture_data$SEASON_RELEASE==1,]
 }else{ # all other RBs recaptures are limited within 3 years of release
@@ -508,7 +412,7 @@ for (y in Survey_est){
   
   # if Season releases is > 3 then restrict it to the past three years
   Season_releases <- seq(min(Survey_years),y,1)
-  if(RB%in%c("486_2","486_3") & length(Season_releases)>1){
+  if(RB%in%c("486_2","RB_TOA") & length(Season_releases)>1){
     # 1 years of releases are included as the 1 year prior to the current season (y) 
     # are used in calculating the tagged fish available for recapture
     Season_releases <- seq(y-1,y,1)}else{
@@ -544,7 +448,7 @@ tags <- tags[,names(tags)%in%c("Releases",Season_releases)]
 ## ------------------------------------------------------------------------
 ## expanded tag_parameters
 if(target_species%in%"TOP"){
-tag_pars <- list("mean_wt"=0, "method"="Chapman", "unit"="kg", "type"=1,
+  tag_pars <- list("mean_wt"=0, "method"="Chapman", "unit"="kg", "type"=1,
                    "tag_mort"=rep(0.1, length(Season_releases)), "reporting"=rep(1,length(Season_releases)), 
                    "nat_mort"=rep(0.155,length(Season_releases)), "chronic_shed"=rep(0.0084,length(Season_releases)),
                    "chronic_mort"=rep(0,length(Season_releases)))}else{
@@ -601,10 +505,10 @@ store_biomass_estimates_chapman$Method <- rep("Chapman",nrow(store_biomass_estim
 
 
 ## ----echo=FALSE----------------------------------------------------------
-# Repeat Chapman estimate for 486_3 except dont need to go though all the steps
+# Repeat Chapman estimate for RB_TOA except dont need to go though all the steps
 
 # define Research blocks 
-RB <- "486_3"
+RB <- "RB_TOA"
 
 Recapture_data <- recapture_data_sim_RB[recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RELEASE"]]%in%RB & recapture_data_sim_RB[["RESEARCH_BLOCK_CODE_RECAPTURE"]]%in%RB,]
 
@@ -629,8 +533,8 @@ names(Recapture_data)<- c("SEASON_RELEASE","SEASON_RECAPTURE","CRUISE_ID_RECAPTU
 target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
 
 
-if(RB%in%c("486_2","486_3")){
-  # for 486_2 and 486_3 WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
+if(RB%in%c("486_2","RB_TOA")){
+  # for 486_2 and RB_TOA WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
   # so only include recaptures from the previous year of release
   Recapture_data <- Recapture_data[Recapture_data$SEASON_RECAPTURE-Recapture_data$SEASON_RELEASE==1,]
 }else{ # all other RBs recaptures are limited within 3 years of release
@@ -666,7 +570,7 @@ for (y in Survey_est){
   
   # if Season releases is > 3 then restrict it to the past three years
   Season_releases <- seq(min(Survey_years),y,1)
-  if(RB%in%c("486_2","486_3") & length(Season_releases)>1){
+  if(RB%in%c("486_2","RB_TOA") & length(Season_releases)>1){
     # 1 years of releases are included as the 1 year prior to the current season (y) 
     # are used in calculating the tagged fish available for recapture
     Season_releases <- seq(y-1,y,1)}else{
@@ -741,12 +645,12 @@ if(length(Season_releases)>2){
 
 # store Chapman estimates with inputs
 
-store_biomass_estimates_chapman_486 <-subset(store_annual_estimates,select=c(RB,Species,Season,Est,CI_lower,
-                                                                         CI_upper,N_recaptures,RB_N_Hauls))
-store_biomass_estimates_chapman_486$Method <- rep("Chapman",nrow(store_biomass_estimates_chapman_486))
+store_biomass_estimates_chapman_TOA <-subset(store_annual_estimates,select=c(RB,Species,Season,Est,CI_lower,
+                                                                             CI_upper,N_recaptures,RB_N_Hauls))
+store_biomass_estimates_chapman_TOA$Method <- rep("Chapman",nrow(store_biomass_estimates_chapman_TOA))
 
-# bind together with 5843a_1 estimates 
-store_biomass_estimates_chapman <- rbind(store_biomass_estimates_chapman,store_biomass_estimates_chapman_486)
+# bind together with RB_TOP estimates 
+store_biomass_estimates_chapman <- rbind(store_biomass_estimates_chapman,store_biomass_estimates_chapman_TOA)
 
 
 ## ------------------------------------------------------------------------
@@ -756,39 +660,34 @@ store_B_est_all <- rbind(store_biomass_estimates_chapman,data.frame(store_biomas
 
 
 ## ------------------------------------------------------------------------
-# install.packages(c("pander","ggplot2"))
-library(pander)
+# install.packages("ggplot2")
 library(ggplot2)
 
 
-## ----echo=FALSE----------------------------------------------------------
-store_B_est_most_recent <- store_B_est_all
+## ----echo=TRUE-----------------------------------------------------------
 
 # remove hauls and catch limit 
-store_B_est_most_recent<- subset(store_B_est_most_recent, select=-RB_N_Hauls)
-store_B_est_most_recent  <- store_B_est_most_recent[order(store_B_est_most_recent$RB),]
-store_B_est_most_recent$Catch_lim <- store_B_est_most_recent$Est*0.04
-row.names(store_B_est_most_recent)<- NULL
-pander::panderOptions("table.alignment.default","left")
-pander::panderOptions('table.split.table', Inf)
-pander::panderOptions("graph.fontsize",10)
-pander::pander(store_B_est_most_recent)
+store_B_est_all <- subset(store_B_est_all, select=-c(RB_N_Hauls,Season))
+store_B_est_all  <- store_B_est_all[order(store_B_est_all$RB),]
+row.names(store_B_est_all)<- NULL
 
-## ----echo=FALSE,warning=FALSE,fig.height=4, fig.width=6------------------
+store_B_est_all
+
+## ----echo=TRUE,warning=FALSE,fig.height=4, fig.width=6-------------------
 
 # Plot biomass estimate time series per species and research block
 
-Plot_data=store_B_est_most_recent
+Plot_data=store_B_est_all
 Plot_data=Plot_data[Plot_data$RB%in%unique(Plot_data$RB[Plot_data$Method%in%"Chapman"]),]
 limits=ggplot2::aes(ymin=CI_lower,ymax =CI_upper)
 dodge = ggplot2::position_dodge(width=0.5)
-p=ggplot2::ggplot(Plot_data,aes(x=as.factor(Season),y=Est,color=Method,group=Method,label=N_recaptures)) +
+p=ggplot2::ggplot(Plot_data,aes(x=as.factor(Method),y=Est,color=Method,group=Method,label=N_recaptures)) +
   geom_point(position = position_dodge(width=0.5)) + 
   geom_text(aes(label=ifelse(is.na(N_recaptures),"",N_recaptures)),
             hjust=-0.5,vjust=-1,color="black",
             size=2) +geom_errorbar(aes(ymin=CI_lower,ymax =CI_upper), 
                                    position=position_dodge(width=0.5), width=0.25,color="black")+
-  facet_wrap(~RB,scales="free_y")+ylab("Estimated Biomass(t)") + xlab("Season") +
+  facet_wrap(~RB,scales="free_y")+ylab("Estimated Biomass(t)") + xlab("Method") +
   scale_x_discrete(expand = c(0.1,0.1)) + 
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),legend.position = "none")
 print(p)
