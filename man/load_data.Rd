@@ -11,5 +11,5 @@ load_data(data_dir)
 unzipped/copied to by the user}
 }
 \description{
-Load CCAMLR data extracts
+Loads catch, tagged fish release, length-weight and tagged fish recapture data that have been extracted using the CCAMLRDBQueries package
 }
