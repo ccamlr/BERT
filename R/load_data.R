@@ -1,6 +1,7 @@
 #' Load CCAMLR data extracts
 #'
-#' Load CCAMLR data extracts
+#' Loads catch, tagged fish release, length-weight and tagged fish recapture data that have been extracted using the CCAMLRDBQueries package
+#' 
 #' @param data_dir is the directory into which the CCAMLR data extracts were
 #' unzipped/copied to by the user
 #' @export
