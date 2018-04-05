@@ -19,7 +19,7 @@ along with bootstrapped confidence intervals
 \section{CPUE seabed area}{
 
 Implementation of the CPUE by seabed area analogy method (Agnew et al, 2009)
-with boostrapped confidence intervals
+with bootstrapped confidence intervals
 }
 
 \section{Vignettes}{
