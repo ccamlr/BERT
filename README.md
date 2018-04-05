@@ -17,7 +17,7 @@ install_github("ccamlr/BERT", build_vignettes = TRUE,auth_token="7ef7614738c2b34
 Vignettes
 ---------
 
-Vignettes provide examples of how functions in R packages work. The BERT R package vignette can be accessed at (<https://lucymerobinson.github.io/CCAMLRGIS/>)
+Vignettes provide examples of how functions in R packages work. The BERT R package vignette can be accessed at (<insert pg when repo is public>)
 
 To view the worked examples navigate to the Articles tab at the top of the page and select the "Estimate local toothfish biomass in CCAMLR data-poor areas"
 
