@@ -68,7 +68,7 @@
       <h1>Estimate local toothfish biomass in CCAMLR data-poor areas</h1>
                         <h4 class="author">Lucy Robinson</h4>
             
-            <h4 class="date">2018-04-05</h4>
+            <h4 class="date">2018-04-06</h4>
           </div>
 
     
@@ -77,7 +77,7 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>This vignette describes the <code>BERT: Biomass Estimation for Research on Toothfish package</code>. The <code>BERT</code> package was developed to assist CCAMLR’s Working Groups with the estimation of the local biomass of toothfish in Research Blocks/data-poor areas.</p>
+<p>This vignette describes the <code>BERT: Biomass Estimation for Research on Toothfish package</code>. The <code>BERT</code> package was developed to assist CCAMLR Working Groups with the estimation of the local biomass of toothfish in Research Blocks/data-poor areas.</p>
 <p>The main purpose of this package is to provide functions that:<br>
 (1) can be used to estimate local biomass using the most up-to-date CPUE-by-seabed area and Chapman mark-recapture biomass estimation methods agreed by WG-FSA and WG-SAM and;<br>
 (2) format the necessary CCAMLR data for input into the biomass estimation method functions</p>
@@ -89,18 +89,18 @@
 <div id="ccamlr-data-required-for-local-toothfish-biomass-estimation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#ccamlr-data-required-for-local-toothfish-biomass-estimation" class="anchor"></a>CCAMLR data required for local toothfish biomass estimation</h2>
-<p>A brief explanation of the data that is collected in CCAMLR’s toothfish research programs that are required for local biomass estimation is provided below, but see Appendix A of WG-FSA-16/27 for more detailed metadata on each of the required data fields.</p>
-<p>Catch data that are collected during toothfish research fishing, and necessary for local biomass estimation, are stored in CCAMLR’s database at a haul-by-haul resolution. Each toothfish longline that is set and hauled will have unique id (ID) and information on the set start (SET_START_DATE) and end dates (SET_END_DATE) and haul start (HAUL_START_DATE) and end (HAUL_END_DATE) dates as well as their geographic positions (e.g. SET_START_LATITUDE,SET_START_LONGITUDE, SET_END_LATITUDE,SET_END_LONGITUDE) and the length of the longline (LINE_LENGTH). The SET_START_DATE is used to assign the CCAMLR fishing season (Season) and the set start and end geographic positions are used to assign a Research Block (RESEARCH_BLOCK_CODE) or Reference Area (REF_AREA_CODE) code. Information on what species were caught (SPECIES_CODE) and their quantities (CAUGHT_KG_TOTAL) on each longline that is hauled is also recorded. The Secretariat has developed routine data extracts for catch data in Research blocks and Reference areas to be provided in csv files (see WG-FSA-16/27).</p>
+<p>A brief explanation of the data that is collected in CCAMLR toothfish research programs that are required for local biomass estimation is provided below, but see Appendix A of WG-FSA-16/27 for more detailed metadata on each of the required data fields.</p>
+<p>Catch data that are collected during toothfish research fishing, and necessary for local biomass estimation, are stored in the CCAMLR cdb database at a haul-by-haul resolution. Each toothfish longline that is set and hauled will have unique id (ID) and information on the set start (SET_START_DATE) and end dates (SET_END_DATE) and haul start (HAUL_START_DATE) and end (HAUL_END_DATE) dates as well as their geographic positions (e.g. SET_START_LATITUDE,SET_START_LONGITUDE, SET_END_LATITUDE,SET_END_LONGITUDE) and the length of the longline (LINE_LENGTH). The SET_START_DATE is used to assign the CCAMLR fishing season (Season) and the set start and end geographic positions are used to assign a Research Block (RESEARCH_BLOCK_CODE) or Reference Area (REF_AREA_CODE) code. Information on what species were caught (SPECIES_CODE) and their quantities (CAUGHT_KG_TOTAL) on each longline that is hauled is also recorded. The Secretariat has developed routine data extracts for catch data in Research blocks and Reference areas to be provided in csv files (see WG-FSA-16/27).</p>
 <p>It is also a requirement to tag and release fish at a rate of 5 fish per tonne, in most areas, where toothfish research is being conducted. Detailed information is recorded on each fish that is tagged and released and any tagged fish recaptured. Tagged fish release data include a cruise identification number (CRUISE_ID) and haul identification number (HAUL_ID) and information on the species (SPECIES_CODE), the geographic position of the release (that is used to assign a RESEARCH_BLOCK_CODE and ASD_CODE) and the length of the fish (LENGTH_CM). Fish are not weighed when tagged, to minimise handling time, but the weight of released fish can be estimated using a modelled length-weight relationship. The estimated weight of the released fish is added to the total weight of fish retained for each haul; which is referred to as substantial catch. The Secretariat has developed routine data extracts of tagged fish release data in Research blocks and Reference areas to be stored in csv files (see WG-FSA-16/27).</p>
-<p>The toothfish length and weight data required for modelling the length-weight relationship is recorded by CCAMLR’s Scientific Observers when they are collecting biological information on fish that are retained as catch. The species (SPECIES_CODE), length (LENGTH_CM) and weight of (WEIGHT_KG) fish retained from the Subarea or Division (ASD_CODE) that the Research Block or Reference Area was located in are required for modelling the length-weight relationship that is then used in estimating released fish weights. The Secretariat has developed routine data extracts of length-weight data in Research blocks and Reference areas to be stored in csv files (see WG-FSA-16/27).</p>
+<p>The toothfish length and weight data required for modelling the length-weight relationship is recorded by a CCAMLR Scientific Observers when they are collecting biological information on fish that are retained as catch. The species (SPECIES_CODE), length (LENGTH_CM) and weight of (WEIGHT_KG) fish retained from the Subarea or Division (ASD_CODE) that the Research Block or Reference Area was located in are required for modelling the length-weight relationship that is then used in estimating released fish weights. The Secretariat has developed routine data extracts of length-weight data in Research blocks and Reference areas to be stored in csv files (see WG-FSA-16/27).</p>
 <p>When a tagged fish is recaptured, similar information is recorded on the recaptured fish as was recorded on its release. For the purpose of local biomass estimation, necessary data include the CCAMLR fishing season of release (SEASON_RELEASE) and recapture (SEASON_RECAPTURE), the Research Block of release (RESEARCH_BLOCK_RELEASE) and recapture (RESEARCH_BLOCK_RECAPTURE) and the cruise id (CRUISE_ID_RECAPTURE) and set id (SET_ID_RECAPTURE). The Secretariat has developed routine data extracts of matched tagged fish release and recapture data in Research blocks in csv files (see WG-FSA-16/27).</p>
 <p>Local biomass is estimated annually (i.e. in each CCAMLR fishing season for which data are available). This requires summing data across hauls within a fishing season. The functions in this R package have been developed to estimate uncertainty around the annual estimates. Uncertainty is estimated through bootstrapping the haul data in a fishing season and this is why data are required at a haul-by-haul (rather than an aggregated annual) resolution.</p>
-<p>The CCAMLR data necessary for both methods can be provided in the same data extracts, but the CPUE-by-seabed area method require catch, length-weight and tagged fish release data from Research blocks and Reference Areas while Chapman-mark recapture method requires catch, tagged fish release and recapture data from the Research Block. These data extracts can be provided by the CCAMLR Secretariat (see WG-FSA-16/27 for further details on data extracts), but need to be formally requested in accordance with CCAMLR’s data access rules. If data extracts are obtained in csv format from the Secretariat these can be loaded into R using the <code>load_data</code> function in the BERT package.</p>
+<p>The CCAMLR data necessary for both methods can be provided in the same data extracts, but the CPUE-by-seabed area method require catch, length-weight and tagged fish release data from Research blocks and Reference Areas while Chapman-mark recapture method requires catch, tagged fish release and recapture data from the Research Block. These data extracts can be provided by the CCAMLR Secretariat (see WG-FSA-16/27 for further details on data extracts), but need to be formally requested in accordance with CCAMLR data access rules. If data extracts are obtained in csv format from the Secretariat these can be loaded into R using the <code>load_data</code> function in the BERT package.</p>
 </div>
 <div id="simulated-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulated-data" class="anchor"></a>Simulated data</h2>
-<p>Due to CCAMLR’s data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the four simulated datasets for Research Blocks see:</p>
+<p>Due to data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the four simulated datasets for Research Blocks see:</p>
 <p>catch data: <code><a href="../reference/catch_data_sim_RB.html">?catch_data_sim_RB</a></code> released tagged fish data: <code><a href="../reference/release_data_sim_RB.html">?release_data_sim_RB</a></code> length and weight data: <code><a href="../reference/length_weight_data_sim_RB.html">?length_weight_data_sim_RB</a></code> matched tagged fish release and recapture: <code><a href="../reference/recapture_data_sim_RB.html">?recapture_data_sim_RB</a></code></p>
 <p>And for the three Reference Areas datasets see: catch data: <code><a href="../reference/catch_data_sim_RefArea.html">?catch_data_sim_RefArea</a></code> released tagged fish data: <code><a href="../reference/release_data_sim_RefArea.html">?release_data_sim_RefArea</a></code> length and weight data: <code><a href="../reference/length_weight_data_sim_RefArea.html">?length_weight_data_sim_RefArea</a></code></p>
 <p>For code to re-simulate data see inst/create_sim_data.R</p>
@@ -511,10 +511,10 @@ store_B_est_all  &lt;-<span class="st"> </span>store_B_est_all[<span class="kw">
 
 store_B_est_all
 <span class="co">#&gt;       RB Species       Est  CI_lower  CI_upper N_recaptures</span>
-<span class="co">#&gt; 1 RB_TOA     TOA 1462.6286  814.3363 3622.1515            6</span>
-<span class="co">#&gt; 2 RB_TOA     TOA  461.1953  388.9808  543.8752           NA</span>
-<span class="co">#&gt; 3 RB_TOP     TOP  809.1233  425.6425 2086.9956            4</span>
-<span class="co">#&gt; 4 RB_TOP     TOP 1361.3481 1162.7674 1605.8745           NA</span>
+<span class="co">#&gt; 1 RB_TOA     TOA 1462.6286  824.7607 3563.0372            6</span>
+<span class="co">#&gt; 2 RB_TOA     TOA  461.1953  387.8208  545.3173           NA</span>
+<span class="co">#&gt; 3 RB_TOP     TOP  809.1233  425.1084 2076.7308            4</span>
+<span class="co">#&gt; 4 RB_TOP     TOP 1361.3481 1165.0225 1603.2030           NA</span>
 <span class="co">#&gt;                Method</span>
 <span class="co">#&gt; 1             Chapman</span>
 <span class="co">#&gt; 2 CPUE-by-seabed area</span>
@@ -545,6 +545,30 @@ p=ggplot2<span class="op">::</span><span class="kw"><a href="http://www.rdocumen
 <span class="kw">print</span>(p)</code></pre></div>
 <p><img src="BERT-CCAMLR_files/figure-html/unnamed-chunk-44-1.png" width="576"></p>
 </div>
+<div id="references" class="section level2">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
+<p>Agnew, D.J., Clark, J.M., McCarthy, P.A., Unwin, M., Ward, M., Jones, L., Breedt, G., Du Plessis, S., Van Heerdon, J., and Moreno, G. 2006. A study of Patagonian toothfish (Dissostichus eleginoides) post-tagging survivorship in Subarea 48.3. CCAMLR Science 13: 279–289.</p>
+<p>Agnew, D.J., Edwards, C., and Hillary, R. 2009. Status of the coastal stocks of Dissostichus Spp. in East Antarctica (Divisions 58.4. 1 and 58.4. 2) CCAMLR Science, 16, 71-100.</p>
+<p>Burch, P., Parker, S., and Welsford, D. 2015. Quantifying uncertainty in the Chapman mark- recapture estimate of abundance. Document WG-FSA-15/49., CCAMLR, Hobart, Australia.</p>
+<p>Burch, P., Robinson, L., 2017a. BERT: Biomass Estimation for Research on Toothfish. R package version 0.2.0.9000.</p>
+<p>Burch, P., Robinson, L., 2017b. tagr: Tagging models for the estimation of abundance and demographic parameters.R package version 0.1.8.</p>
+<p>Candy, S.G., Welsford, D.C., Lamb, T., Verdouw, J.J., and Hutchins, J.J. 2011. Estimation of natural mortality for the Patagonian toothfish at Heard and McDonald Islands using catch-at- age and aged mark-recapture data from the main trawl ground. CCAMLR Science 18: 29–45.</p>
+<p>CCAMLR Secretariat, 2015, Comparing surface and planimetric area across multiple scales and assessing the impact of different data sources on seabed area estimation in research blocks in the CAMLR Convention Area. Document WG-SAM-15/01, CCAMLR, Hobart, Australia.</p>
+<p>CCAMLR Secretariat, 2016. Local biomass estimates for Antarctic (Dissostichus mawsoni) and Patagonian (Dissostichus eleginoides) toothfish in research blocks in Subareas 48.6 and 58.4. Document WG-FSA-16/27, CCAMLR, Hobart, Australia.</p>
+<p>Chernick, M.R. 2008. Bootstrap methods: A guide for practitioners and researchers. Second Edition. Wiley-Interscience.</p>
+<p>Dunn, A. Horn, P.L. and Hanchet, S.M. 2006. Revised estimates of the biological parameters for Antarctic toothfish (Dissostichus mawsoni) in the Ross Sea. Document WG-FSA-SAM- 06/08, CCAMLR, Hobart, Australia.</p>
+<p>Dunn, A. Smith, M. H. Agnew, D. J. and Mormede, S., 2011, Estimates of the tag loss rates for single and double tagged toothfish (Dissostichus mawsoni) fishery in the Ross Sea. Document WG-SAM-11/18, CCAMLR, Hobart, Australia.</p>
+<p>Efron, B., and Tibshirani, R.J. 1993. An introduction to the bootstrap. Chapman and Hall.</p>
+<p>Hillary, R. 2009. Assessment and tag program adaption methods for exploratory fisheries in the CAMLR Convention Area: an example application for Division 58.4.3a. CCAMLR Science 16:101–113.</p>
+<p>Robinson, L., 2016. CCAMLRDBQueries: Extracts data from the CCAMLR Central DataBase (cdb) for the BERT R package. R package version 0.0.0.9000.</p>
+<p>Robinson, L., Burch, P., Reid, K., 2017. Estimating uncertainty in local biomass estimates of toothfish in CCAMLR in Subareas 58.4 and 48.6 Research Blocks . Document WG-SAM-17/12. Hobart, Australia SC-CAMLR-XXXII, 2013. REPORT OF THE THIRTY-SECOND MEETING OF THE SCIENTIFIC COMMITTEE. HOBART, AUSTRALIA 21–25 OCTOBER 2013.</p>
+<p>SC-CAMLR-XXXIII, 2014. REPORT OF THE THIRTY-THIRD MEETING OF THE SCIENTIFIC COMMITTEE, HOBART, AUSTRALIA 20–24 OCTOBER 2014.</p>
+<p>SC-CAMLR-XXXIV, 2015. REPORT OF THE THIRTY-FOURTH MEETING OF THE SCIENTIFIC COMMITTEE, HOBART, AUSTRALIA 19–23 OCTOBER 2015.</p>
+<p>SC-CAMLR-XXXV, 2016. REPORT OF THE THIRTY-FIFTH MEETING OF THE SCIENTIFIC COMMITTEE, HOBART, AUSTRALIA 17–21 OCTOBER 2016.</p>
+<p>Thanassekos, S., Robinson, L., 2017. CCAMLRGIS: bridging R and the CCAMLR online GIS.R package version 2.0.2.9000.</p>
+<p>WG-SAM-17, 2017. Report of the Working Group on Statistics, Assessments and Modelling. CCAMLR, Hobart, Australia.</p>
+</div>
 </div>
   </div>
 
@@ -563,6 +587,7 @@ p=ggplot2<span class="op">::</span><span class="kw"><a href="http://www.rdocumen
       <li><a href="#chapman-mark-recapture-biomass-estimation-of-patagonian-toothfish-in-research-block-rb_top">Chapman mark-recapture biomass estimation of Patagonian toothfish in Research Block RB_TOP</a></li>
       <li><a href="#example-presentation-of-biomass-estimates">Example presentation of biomass estimates</a></li>
       <li><a href="#compare-biomass-estimates-with-confidence-intervals-using-the-two-different-methods">Compare biomass estimates with confidence intervals using the two different methods</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>
