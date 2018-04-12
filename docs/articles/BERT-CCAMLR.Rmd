@@ -340,7 +340,7 @@ The point CPUE-by-seabed area biomass estimate of TOA in RB_TOA (i.e. Est) for t
 ```{r}
 obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
                    ref_CPUE_data=RefArea_haul_data_test,
-                   ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv=Ref_area_CVs)
+                   ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv = Ref_area_CVs)
 
 CPUE_seabed_boot <- cpue_bootstrap(obj,n_boot)
 
@@ -471,7 +471,7 @@ for (y in Survey_est){
   
   obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
                      ref_CPUE_data=RefArea_haul_data_test,
-                     ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv=Ref_area_CVs)
+                     ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv = Ref_area_CVs)
   
   CPUE_seabed_boot <- cpue_bootstrap(obj,n_boot)
   
@@ -499,7 +499,7 @@ store_biomass_estimates_CPUE <- rbind(store_biomass_estimates_CPUE,store_biomass
 
 ```
 
-## Chapman mark-recapture biomass estimaton
+## Chapman mark-recapture estimator
 
 The point estimation of local biomass using the Chapman mark-recapture-based method was agreed at WG-SAM-16; 2.28 and defined as: 
 
@@ -514,11 +514,11 @@ recaptured in season $j$ (excluding within-season recaptures).
 The agreed calculation for the number of tagged fish available for recapture is: 
 
 $$
-n_j=
-\begin{cases} 
-j=1, r_j(1-t)e^{-(f+M)}-m_j
+n_j =
+\begin{cases}
+j=1, r_j(1-t)e^{-(f+M)}-m_j                       
 \\
-j>1, n_{j-1}e^{-(f+M)}+r_j(1-t)e^{-(f+M)}-m_j
+j>1, n_{j-1}e^{-(f+M)+r_j(1-t)e^{-(f+M)}-m_j
 \end{cases}
 $$       
 
