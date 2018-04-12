@@ -1,26 +1,26 @@
 #' Research Block Seabed Area
 #' 
-#' A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 data within Research Blocks that were assessed at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
+#' A dataset that contains fishable seabed area within Research Blocks assessed at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
 #' 
 #' @docType data
 #' 
 #' @format A dataframe with 27 rows and 2 columns
 #' \describe{
-#' \item{RB}{CCAMLR Research Block codes from WG-FSA-17}
-#' \item{Seabed_area}{Planimetric seabed area within the 600-1800 m fishable depth range}
+#' \item{RB}{CCAMLR Research Block codes from Research Blocks on the CCAMLR online GIS as of 2018-04-10}
+#' \item{Seabed_area}{Planimetric seabed area within the 600-1800 m estimated from a processed version of the GEBCO 2014 data - see inst/calculate_and_store_seabed_area_values.R}
 #' }
 "RB_seabed_area"
 
 #' Reference Area Seabed Area
 #' 
-#' A dataset that contains fishable seabed area estimated from a processed version of the GEBCO 2014 data within Reference Areas that were used in used in estimating local biomass at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
+#' A dataset that contains fishable seabed area within Reference Areas that were used in used in estimating local biomass at WG-FSA-17 (see Fig 1 in WG-FSA-17/42)
 #' 
 #' @docType data
 #' 
 #' @format A dataframe with 6 rows and 2 columns
 #' \describe{
 #' \item{RefArea}{CCAMLR Reference area codes noting that RSR_open and HIMI are the only Reference areas currently used}
-#' \item{Seabed_area}{Planimetric seabed area within the 600-1800 m fishable depth range}
+#' \item{Seabed_area}{Planimetric seabed area within the 600-1800 m estimated from a processed version of the GEBCO 2014 data - see inst/calculate_and_store_seabed_area_values.R}
 #' }
 "Ref_area_seabed_area"
 

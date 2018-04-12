@@ -140,3 +140,4 @@ error <- sample(seq(0,2,1),400,replace=TRUE)
 length_weight_data_sim_RefArea$WEIGHT_KG <- exp(-12+3*log(length_weight_data_sim_RefArea$LENGTH_CM))*1.01 + error
 
 save(catch_data_sim_RB,release_data_sim_RB,recapture_data_sim_RB,length_weight_data_sim_RB,catch_data_sim_RefArea,release_data_sim_RefArea,length_weight_data_sim_RefArea,file="data/Simulated_data.rda")
+
