@@ -1,7 +1,7 @@
 #' Estimate tagged fish weight from fish lengths  
 #'
 #' Tagged fish releases and recaptures are not weighed but thier lengths are measured. 
-#' This function uses length and weight measurements from commercial data in a log-linear model to estimate the weights of tagged fish from length data.
+#' Based on the allometric relationship between length and weight, this function uses length and weight measurements from commercial data in a log-linear model to estimate the weights of tagged fish from length data.
 #' A dataframe is returned with all the information input into length_data plus the estimated weights    
 #'
 #'@param length_weight_data is a four column dataframe with the CCAMLR ASD code,species code, length (cm) and weight (kg) 
