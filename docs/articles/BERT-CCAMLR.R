@@ -45,9 +45,7 @@ Catch_data_RB <- catch_data_sim_RB[catch_data_sim_RB[["RESEARCH_BLOCK_CODE"]]%in
 
 ## ------------------------------------------------------------------------
 # note only 3 Research Blocks currently target TOP and all others target TOA
-TOP_target_RBs <- c("RB_TOP","5844b_1","5844b_2")
-## make sure you specifiy target species data 
-target_species <- ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
+target_species <- "TOA"
 
 
 ## ------------------------------------------------------------------------
@@ -63,7 +61,7 @@ Catch_data_RB<- data.frame(Catch_data_RB$ID,Catch_data_RB$Season,Catch_data_RB$C
 
 
 ## ------------------------------------------------------------------------
-Ref_area <- ifelse(RB%in%TOP_target_RBs,"HIMI","RSR")
+Ref_area <- ifelse(RB=="TOP_RB","HIMI","RSR")
 
 
 ## ------------------------------------------------------------------------
@@ -86,7 +84,7 @@ Catch_data_RefArea <- data.frame(Catch_data_RefArea$ID,Catch_data_RefArea$Season
 
 
 ## ------------------------------------------------------------------------
-# 2017 values from WG-FSA-17
+# 2017 assessment estimates from WG-FSA-17
 Ref_area_biomass <-ifelse(Ref_area%in%"HIMI",43993.03,92693.07)
 
 Ref_area_CVs <-ifelse(Ref_area%in%"HIMI",0.072,0.073)
@@ -139,24 +137,24 @@ RefArea_haul_data_test <- extract_catch_data_cpue_est(catch_data=Catch_data_RefA
 
 
 ## ----echo=FALSE----------------------------------------------------------
-# remove survey year col from the matrix for input into multi release function
+# just need a seabed area value so picked values for existing Research Blocks
 if(RB=="RB_TOA"){
-  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"486_3"]
+  RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%"486_3"]
 }
 if(RB=="RB_TOP"){
-  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"5843a_1"]  
+  RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%"5843a_1"]  
 }
 
 ## ----eval=FALSE----------------------------------------------------------
 #  # remove survey year col from the matrix for input into multi release function
-#  RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%RB]
+#  RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%RB]
 
 ## ------------------------------------------------------------------------
 # change Reference area seabed area RSR_open
 if(Ref_area=="RSR"){
-  RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%"RSR_open"]
+  RefArea_Seabed_area <-Ref_area_seabed_area$Fishable_area[Ref_area_seabed_area$Polys%in%"RSR_open"]
 }else{
-  RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%Ref_area]
+  RefArea_Seabed_area <-Ref_area_seabed_area$Fishable_area[Ref_area_seabed_area$Polys%in%Ref_area]
 }
 
 ## ------------------------------------------------------------------------
@@ -166,7 +164,7 @@ n_boot <- 10000
 ## ------------------------------------------------------------------------
 obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
                    ref_CPUE_data=RefArea_haul_data_test,
-                   ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv = Ref_area_CVs)
+                   ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv=Ref_area_CVs)
 
 CPUE_seabed_boot <- cpue_bootstrap(obj,n_boot)
 
@@ -214,9 +212,9 @@ Catch_data_RB<- data.frame(Catch_data_RB$ID,Catch_data_RB$Season,Catch_data_RB$C
 
 
 ## make sure you specifiy target species data 
-target_species <- ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
+target_species <- "TOP"
 
-Ref_area <- ifelse(RB%in%TOP_target_RBs,"HIMI","RSR")
+Ref_area <- ifelse(RB=="RB_TOP","HIMI","RSR")
 
 Release_data_RefArea <- release_data_sim_RefArea[release_data_sim_RefArea[["REF_AREA_CODE"]]%in%Ref_area,]
 
@@ -278,23 +276,23 @@ for (y in Survey_est){
                                                         catch_season = Ref_area_seasons)
   
   if(RB=="RB_TOA"){
-    RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"486_3"]
+    RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%"486_3"]
   }
   if(RB=="RB_TOP"){
-    RB_Seabed_area <- RB_seabed_area$Seabed_area[RB_seabed_area$RB%in%"5843a_1"]  
+    RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%"5843a_1"]  
   }
   
   
   # change Reference area seabed area RSR_open
   if(Ref_area=="RSR"){
-    RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%"RSR_open"]
+    RefArea_Seabed_area <-Ref_area_seabed_area$Fishable_area[Ref_area_seabed_area$Polys%in%"RSR_open"]
   }else{
-    RefArea_Seabed_area <-Ref_area_seabed_area$Seabed_area[Ref_area_seabed_area$RefArea%in%Ref_area]
+    RefArea_Seabed_area <-Ref_area_seabed_area$Fishable_area[Ref_area_seabed_area$Polys%in%Ref_area]
   }
   
   obj <- CPUE_seabed(fish_CPUE_data=RB_haul_data,fish_area=RB_Seabed_area,
                      ref_CPUE_data=RefArea_haul_data_test,
-                     ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv = Ref_area_CVs)
+                     ref_area=RefArea_Seabed_area,ref_bio=Ref_area_biomass,ref_bio_cv=Ref_area_CVs)
   
   CPUE_seabed_boot <- cpue_bootstrap(obj,n_boot)
   
@@ -363,7 +361,7 @@ names(Recapture_data)<- c("SEASON_RELEASE","SEASON_RECAPTURE","CRUISE_ID_RECAPTU
 ## ------------------------------------------------------------------------
 
 # ensure only data from the relevant RB is included 
-target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
+target_species<-"TOP"
 
 
 ## ------------------------------------------------------------------------
@@ -530,10 +528,10 @@ names(Recapture_data)<- c("SEASON_RELEASE","SEASON_RECAPTURE","CRUISE_ID_RECAPTU
 
 
 # ensure only data from the relevant RB is included 
-target_species<-ifelse(RB%in%TOP_target_RBs,"TOP","TOA")
+target_species<-ifelse(RB=="RB_TOP","TOP","TOA")
 
 
-if(RB%in%c("486_2","RB_TOA")){
+if(RB=="RB_TOA"){
   # for 486_2 and RB_TOA WG-FSA-17 agreed tagged fish should only be 1 yr at liberty 
   # so only include recaptures from the previous year of release
   Recapture_data <- Recapture_data[Recapture_data$SEASON_RECAPTURE-Recapture_data$SEASON_RELEASE==1,]
@@ -659,11 +657,6 @@ store_B_est_all <- rbind(store_biomass_estimates_chapman,data.frame(store_biomas
 
 
 
-## ------------------------------------------------------------------------
-# install.packages("ggplot2")
-library(ggplot2)
-
-
 ## ----echo=TRUE-----------------------------------------------------------
 
 # remove hauls and catch limit 
@@ -672,6 +665,11 @@ store_B_est_all  <- store_B_est_all[order(store_B_est_all$RB),]
 row.names(store_B_est_all)<- NULL
 
 store_B_est_all
+
+## ------------------------------------------------------------------------
+# install.packages("ggplot2")
+library(ggplot2)
+
 
 ## ----echo=TRUE,warning=FALSE,fig.height=4, fig.width=6-------------------
 
