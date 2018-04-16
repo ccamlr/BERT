@@ -1,8 +1,7 @@
 #' BERT: Biomass Estimation for Research on Toothfish
 #'
-#' The BERT package provides methods for calculating precautionary estimates
-#' of biomass using CPUE and tag-based methods to prevent stock depletion while
-#' progressing towards an assessment.
+#' The BERT package provides methods for estimating biomass with bootstrapped confidence intervals using 
+#' CPUE and tag-based methods agreed by WG-FSA and WG-SAM
 #'
 #' @section Multiple release, single release tag-return models:
 #' Implementation of Chapman estimators (Seber 1982)
