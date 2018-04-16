@@ -33,7 +33,7 @@ This vignette provides examples of both methods that are similar in lay-out to t
 To work through the examples in the vignette you will need to install the BERT R package from github. In order to install from github you will firstly need to install devtools (i.e. `install.packages("devtools")`) and then use the following command:
 
 ```{r, eval = FALSE}
-devtools::install_github("ccamlr/BERT",build_vignettes=TRUE,auth_token="7ef7614738c2b3463fc791d4f22a719d61be35fa")
+devtools::install_github("ccamlr/BERT",build_vignettes=TRUE)
 
 ```
 
