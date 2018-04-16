@@ -18,7 +18,7 @@ Vignettes
 
 Vignettes provide examples of how functions in R packages work. The BERT R package vignette can be accessed at (https://ccamlr.github.io/BERT/articles/BERT-CCAMLR.html)
 
-To view the worked examples navigate to the Articles tab at the top of the page and select the "Estimate local toothfish biomass in CCAMLR data-poor areas"
+To view the worked examples navigate to the Articles tab at the top of the page and select the "Estimating local toothfish biomass in CCAMLR data-poor areas"
 
 
 
