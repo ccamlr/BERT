@@ -51,11 +51,11 @@ When a tagged fish is recaptured, similar information is recorded on the recaptu
 
 Local biomass is estimated annually (i.e. in each CCAMLR fishing season for which data are available). This requires summing data across hauls within a fishing season. The functions in this R package have been developed to estimate uncertainty around the annual estimates. Uncertainty is estimated through bootstrapping the haul data in a fishing season and this is why data are required at a haul-by-haul (rather than an aggregated annual) resolution. 
 
-The CCAMLR data necessary for both methods can be provided in the same data extracts, but the CPUE-by-seabed area method require catch, length-weight and tagged fish release data from Research blocks and Reference Areas while the Chapman-mark recapture method requires catch, tagged fish release and recapture data from the Research Block. These data extracts can be provided by the CCAMLR Secretariat (see WG-FSA-16/27 for further details on data extracts), but need to be formally requested in accordance with CCAMLR data access rules. If data extracts are obtained in csv format from the Secretariat these can be loaded into R using the `load_data` function in the BERT package. 
+The CCAMLR data necessary for both methods can be provided in the same data extracts, but the CPUE-by-seabed area method require catch, length-weight and tagged fish release data from Research blocks and Reference Areas while the Chapman-mark recapture method requires catch, tagged fish release and recapture data from the Research Block. Data extracts can be requested from the CCAMLR Secretariat (see WG-FSA-16/27 for further details on data extracts) in accordance with CCAMLR data access rules. If data extracts are obtained in csv format from the Secretariat these can be loaded into R using the `load_data` function in the BERT package. 
 
 ## Simulated data
 
-Due to data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the four simulated datasets for Research Blocks see:
+Due to the CCAMLR data access rules, the catch, tagged fish release, length-weight and matched tagged fish release and recapture datasets described above were simulated for this vignette to represent data from Research Block and Reference Areas that were similar to the data that would be provided in data extracts. For metadata on the four simulated datasets for Research Blocks see:
 
 catch data: `?catch_data_sim_RB`
 released tagged fish data: `?release_data_sim_RB`
@@ -133,7 +133,7 @@ The areas of the research block and the Reference Area ($A_x$,$A_r$) were assume
 
 The uncertainty was quantified by taking quantiles of the $B^i_x$, for example, 95% confidence intervals are the 0.025 and 0.975 quantiles.
 
-## CPUE-by-seabed area biomass estimation of Antarctic toothfish in Research Block RB_TOA 
+## Example of estimating Antarctic toothfish biomass using the CPUE-by-seabed area method
 
 In this example toothfish biomass is estimated using the CPUE-by-seabed area method in RB_TOA based on simulated data and the estimated released fish weights described above. 
 
@@ -313,7 +313,7 @@ RB_Seabed_area <- RB_seabed_area$Fishable_area[RB_seabed_area$Polys%in%RB]
 ```    
 
 
-Fishable seabed area values for Reference Areas are also stored in the `BERT` R package as a two column dataframe called `Ref_area_seabed_area`. The first column contains the Reference Area codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values (updated 2018-04-11 -see Thanassekos, S., Robinson, L., 2017 for details). For further information on these data see ?`Ref_area_seabed_area`
+Fishable seabed area values for Reference Areas are also stored in the `BERT` R package as a two column dataframe called `Ref_area_seabed_area`. The first column contains the Reference Area codes that were used in calculating biomass estimates for WG-FSA-17 and the second column includes the planimetric seabed area values (updated 2018-04-11 -see Thanassekos & Robinson,2017 for details). For further information on these data see ?`Ref_area_seabed_area`
 
 
 ```{r}
@@ -560,7 +560,7 @@ The uncertainty was then quantified by taking quantiles of the $B^i_x$, for exam
 Note that in the results the TOA abbreviation for D.mawsoni (TOA) and D.eleginoides (TOP) are used consistently throughout the results below. 
 
 
-## Chapman mark-recapture biomass estimation of Patagonian toothfish in Research Block RB_TOP
+## Example of estimating Patagonian toothfish using the Chapman mark-recapture method
 
 In this example toothfish biomass is estimated using the Chapman mark-recapture method in RB_TOP based on simulated data and the estimated released fish weights described above. 
 
