@@ -1,8 +1,7 @@
 BERT R package
 ===================
 
-The **BERT: Biomass Estimation for Research on Toothfish** R package contains methods for estimating biomass with bootstrapped confidence intervals in CCAMLR fisheries.
-
+The **BERT: Biomass Estimation for Research on Toothfish** R package contains methods for estimating biomass with bootstrapped confidence intervals using CPUE and tag-based methods agreed by WG-FSA and WG-SAM.
 
 Installation
 ------------
