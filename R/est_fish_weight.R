@@ -56,7 +56,7 @@ est_fish_weight <- function(length_weight_data,length_data){
       if(nrow(length_weight_parameters[index_param,])>0 & nrow(length_data[index_releases,])>0){
         a <- as.numeric(as.character(length_weight_parameters$INTERCEPT2[index_param]))
         b <- as.numeric(as.character(length_weight_parameters$SLOPE[index_param]))
-        c <- as.numeric(as.character(length_weight_parameters$CF[index_param]))
+        cf <- as.numeric(as.character(length_weight_parameters$CF[index_param]))
         # apply correction factor
         length_data$EST_WEIGHT_KG[index_releases]<-exp(a+b*log(length_data$LENGTH_CM[index_releases]))*cf
       }
