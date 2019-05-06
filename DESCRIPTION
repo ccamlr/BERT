@@ -1,9 +1,9 @@
 Package: BERT
 Type: Package
 Title: Biomass Estimation for Research on Toothfish
-Version: 0.2.1.9000
+Version: 0.2.2
 Date: 2017-09-15
-Authors@R: c(person("Paul","Burch", email = "Paul.Burch@aad.gov.au",role = c("aut")),person("Lucy", "Robinson", email = "lucy.robinson@ccamlr.org",role = c("aut","cre")))
+Authors@R: c(person("Keith","Reid", email = "Keith.Reid@ccamlr.org",role = c("aut")),person("Stephane","Thanassekos", email = "Stephane.Thanassekos@ccamlr.org",role = c("aut")),person("Paul","Burch", email = "Paul.Burch@aad.gov.au",role = c("aut")),person("Lucy", "Robinson", email = "lucy.robinson@ccamlr.org",role = c("aut","cre")))
 Depends:
     R (>= 3.0.2)
 Imports:

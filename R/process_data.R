@@ -70,7 +70,7 @@ extract_recaptures_season <- function(release_data, recapture_data,release_seaso
 
 #' Extract haul data 
 #'
-#' Extract catch data for cpue by seabed area biomass
+#' Extract catch data for cpue by seabed area biomass (KR August 2018 updated version)
 #' @param catch_data catch data at haul-by-haul resolution that includes a data frame with columns of data in the following order: Unique Catch ID record reference, Fishing Season,cruise id, set id, species code, retained catch quantity (kg),long line length 
 #' @param release_data release data at the haul-by-haul resolution that includes a data frame with columns of data in the following order: Fishing Season,cruise id, set id, species code and fish weights if available and measure="weights", if fish weights are not available and measure="counts" these weights are estimated 
 #' @param catch_season is the CCAMLR fishing seasons of interest where the default = NULL uses all the catch data seasons included in the catch_data dataframe
@@ -81,74 +81,60 @@ extract_recaptures_season <- function(release_data, recapture_data,release_seaso
 #' @importFrom reshape2 dcast 
 #' @export
 #' 
-extract_catch_data_cpue_est <- function(catch_data,release_data,catch_season=NULL,measure,mean_fish_weight=NULL,target_species){
+extract_catch_data_cpue_est<-function (catch_data, release_data, catch_season = NULL, measure, 
+                                       mean_fish_weight = NULL, target_species) {
   
-  # assign variable names to catch data dataframe
-  names(catch_data) <- c("ID","SEASON","CRUISE_ID","SET_ID","SPECIES_CODE","CAUGHT_KG_TOTAL","LINE_LENGTH")
   
-  if(measure=="counts"){
-    # create dummy quantity filed with replicated 1
-    release_data$MEASURE <- rep(1,nrow(release_data))
+  names(catch_data) <- c("ID", "SEASON", "CRUISE_ID", "SET_ID", 
+                         "SPECIES_CODE", "CAUGHT_KG_TOTAL", "LINE_LENGTH")
+  if (measure == "counts") {
+    release_data$MEASURE <- rep(1, nrow(release_data))
   }
-  # assign variable names to release data dataframe
-  names(release_data) <- c("SEASON","CRUISE_ID","SET_ID","SPECIES_CODE","MEASURE")
-  
-  # set up check for params
-  if (ncol(catch_data)!=7)
+  names(release_data) <- c("SEASON", "CRUISE_ID", "SET_ID", 
+                           "SPECIES_CODE", "MEASURE")
+  if (ncol(catch_data) != 7) 
     stop("catch_data table should have seven columns check that all necessary information has been provided")
-  
-  if ((ncol(release_data)!=5))
+  if ((ncol(release_data) != 5)) 
     stop("release_data table should have five columns, check all necessary information has been provided")
-  
-  if (measure=="counts" & is.null(mean_fish_weight))
+  if (measure == "counts" & is.null(mean_fish_weight)) 
     stop("a mean fish weight has not been entered, but is required for fish count measurements")
-  
-  # remove seasons that are not required 
-  if(!is.null(catch_season) & nrow(catch_data)>0){
-    catch_data <- catch_data[catch_data$SEASON%in%catch_season,]
+  if (!is.null(catch_season) & nrow(catch_data) > 0) {
+    catch_data <- catch_data[catch_data$SEASON %in% catch_season, 
+                             ]
   }
-  
-  # remove seasons that are not required 
-  if(!is.null(catch_season) & nrow(release_data)>0){
-    release_data <- release_data[release_data$SEASON%in%catch_season,]
+  if (!is.null(catch_season) & nrow(release_data) > 0) {
+    release_data <- release_data[release_data$SEASON %in% 
+                                   catch_season, ]
   }
-  
-  
-  # aggregate release by by haul so their weight can be added to the total catch retained catch
-  if(nrow(release_data)>0){
-    # Weight_releases_haul_by_haul<- plyr::ddply(release_data, .(release_data$CRUISE_ID,release_data$SET_ID,release_data$SPECIES_CODE,release_data$SEASON),function(x){sum(x$MEASURE)})
-    Weight_releases_haul_by_haul<- stats::aggregate(MEASURE~CRUISE_ID+SET_ID+SPECIES_CODE+SEASON,data=release_data,sum)
-    
-    names(Weight_releases_haul_by_haul)<-c("CRUISE_ID","SET_ID","SPECIES_CODE","SEASON","RELEASE_TOTAL")
-    catch_release_data<- plyr::join(catch_data,Weight_releases_haul_by_haul,by=c("CRUISE_ID","SET_ID","SPECIES_CODE"))
-    # assume NA values Total_kg_released values are zero
-    catch_release_data$RELEASE_TOTAL[is.na(catch_release_data$RELEASE_TOTAL)]<-0
-    
-    catch_release_data$CAUGHT_KG_TOTAL[is.na(catch_release_data$CAUGHT_KG_TOTAL)]<-0
-    
-    # if release data are added as counts then a mean weight is used to estimate their total weight per haul 
-    if(measure=="counts"){
-      # convert to weight 
-      catch_release_data$CAUGHT_KG_TOTAL <- catch_release_data$CAUGHT_KG_TOTAL+(catch_release_data$RELEASE_TOTAL*mean_fish_weight)
-    }else{
-      catch_release_data$CAUGHT_KG_TOTAL <- catch_release_data$CAUGHT_KG_TOTAL+catch_release_data$RELEASE_TOTAL
+  if (nrow(release_data) > 0) {
+    Weight_releases_haul_by_haul <- stats::aggregate(MEASURE ~ 
+                                                       CRUISE_ID + SET_ID + SPECIES_CODE + SEASON, data = release_data, 
+                                                     sum)
+    names(Weight_releases_haul_by_haul) <- c("CRUISE_ID", 
+                                             "SET_ID", "SPECIES_CODE", "SEASON", "RELEASE_TOTAL")
+    catch_release_data <- plyr::join(catch_data, Weight_releases_haul_by_haul, 
+                                     by = c("CRUISE_ID", "SET_ID", "SPECIES_CODE"))
+    catch_release_data$RELEASE_TOTAL[is.na(catch_release_data$RELEASE_TOTAL)] <- 0
+    catch_release_data$CAUGHT_KG_TOTAL[is.na(catch_release_data$CAUGHT_KG_TOTAL)] <- 0
+    if (measure == "counts") {
+      catch_release_data$CAUGHT_KG_TOTAL <- catch_release_data$CAUGHT_KG_TOTAL + 
+        (catch_release_data$RELEASE_TOTAL * mean_fish_weight)
     }
-    
-  }else{catch_release_data <- catch_data
-  
+    else {
+      catch_release_data$CAUGHT_KG_TOTAL <- catch_release_data$CAUGHT_KG_TOTAL + 
+        catch_release_data$RELEASE_TOTAL
+    }
   }
+  else {
+    catch_release_data <- catch_data
+  }
+  catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1000)
+  catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE %in% 
+                                    target_species] <- 0
   
-  catch_release_data$CAUGHT_KG_KM <- catch_release_data$CAUGHT_KG_TOTAL/(catch_release_data$LINE_LENGTH/1e3)
   
-  
-  # if SPECIES_CODE catch is not the target species then set the catch to zero 
-  catch_release_data$CAUGHT_KG_KM[!catch_release_data$SPECIES_CODE%in%target_species]<-0
-  
-  # remove duplicate sets where both TOP and TOA were caught (i.e. a zero catch record from a non-target species will only count if there was no target species caught)
-  # this should be C2.ID as there may be hauls that dont have an observed CRUISE and SET ID
-  
-  catch_release_data <- catch_release_data[!duplicated(catch_release_data$ID),]
-  
+  catch_release_data <- catch_release_data[catch_release_data$SPECIES_CODE %in% 
+                                             target_species, ]
   catch_release_data$CAUGHT_KG_KM
 }
 
